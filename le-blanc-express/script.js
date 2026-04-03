@@ -13,9 +13,9 @@ const defaultSettings = {
   phone: "07 56 82 89 88",
   email: "contact@leblancexpress.fr",
   address: "3255 Rte de Strasbourg, 69140 Rillieux-la-Pape",
-  heroTitle: "Votre expert en assainissement disponible 24h/24, 7j/7",
+  heroTitle: "BENLEZGUEG",
   heroDescription:
-    "LE BLANC EXPRESS intervient pour le debouchage, le curage et les urgences d'assainissement avec une approche rapide, propre et professionnelle.",
+    "BENLEZGUEG intervient pour le debouchage, le curage et les urgences d'assainissement avec une approche rapide, propre et professionnelle.",
   heroImage:
     "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1200&q=80",
   aboutTitle: "Une entreprise locale réactive au service de vos besoins",

@@ -1,0 +1,27 @@
+# Déploiement UNIQUEMENT du site client1 sur le VPS.
+# Aucune référence à DownPricer : le job SSH n'exécute qu'un script sous /opt/client1.
+name: Deploy client1 (VPS)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-client1-vps
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déployer via SSH (script limité à /opt/client1)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            bash /opt/client1/deploy-client1.sh
