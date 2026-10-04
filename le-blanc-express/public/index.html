@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SiteReady</title>
+  <meta name="theme-color" content="#10243A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script type="application/ld+json" id="json-ld">{}</script>
+</head>
+<body data-page="dynamique">
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="SiteReady — accueil">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text"><span data-site-name-normal>Site</span><strong data-site-name-bold>Ready</strong></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Navigation principale">
+        <ul id="nav-links" class="site-nav__list"></ul>
+        <a class="btn btn--pill btn--night" href="#contact" data-nav-cta>Maquette gratuite</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section id="top" class="section section--yellow section--watermark hero">
+      <div class="container hero__grid">
+        <div class="hero__copy reveal">
+          <p class="pill pill--bounce" data-hero-badge>Ardèche · 07</p>
+          <h1 data-hero-title></h1>
+          <p class="hero__subtitle" data-hero-subtitle></p>
+          <a class="btn btn--pill btn--night" href="#contact" data-hero-cta></a>
+        </div>
+        <div id="hero-phone" class="hero__visual reveal"></div>
+      </div>
+    </section>
+
+    <section id="probleme" class="section section--cream section--watermark">
+      <div class="container">
+        <h2 class="section-title reveal" data-problem-title></h2>
+        <div class="search-demo reveal">
+          <div class="search-demo__bar" role="presentation">
+            <span class="search-demo__icon" aria-hidden="true"></span>
+            <span id="fake-search-text" class="search-demo__query"></span>
+            <span class="search-demo__cursor" aria-hidden="true"></span>
+          </div>
+          <ol id="search-results" class="search-demo__results"></ol>
+          <p class="search-demo__missing" data-problem-missing></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="comment" class="section section--night">
+      <div class="container">
+        <h2 class="section-title section-title--light reveal" data-steps-title></h2>
+        <p class="section-lead section-lead--light reveal" data-steps-intro></p>
+        <ol id="steps-list" class="steps"></ol>
+      </div>
+    </section>
+
+    <section id="style-selector" class="section section--cream theme-switch" aria-labelledby="theme-switch-title">
+      <div class="container theme-switch__inner reveal">
+        <h2 class="section-title" id="theme-switch-title" data-theme-switch-title></h2>
+        <p class="section-lead" data-theme-switch-subtitle></p>
+        <div class="theme-switch__controls" role="group" aria-label="Choisir un style de page">
+          <button type="button" class="theme-switch__btn is-active" data-theme-active="dynamique" aria-pressed="true" data-theme-switch-dynamique></button>
+          <a class="theme-switch__btn" href="/elegant/#style-selector" data-go-elegant data-theme-active="elegant" data-theme-switch-elegant></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="tarifs" class="section section--cream section--watermark">
+      <div class="container">
+        <h2 class="section-title reveal" data-pricing-title></h2>
+        <p class="section-lead reveal" data-pricing-subtitle></p>
+        <div id="pricing-grid" class="pricing-grid"></div>
+      </div>
+    </section>
+
+    <section id="inclus" class="section section--green">
+      <div class="container">
+        <h2 class="section-title section-title--light reveal" data-included-title></h2>
+        <ul id="included-list" class="included-list"></ul>
+      </div>
+    </section>
+
+    <section id="exemples" class="section section--cream">
+      <div class="container">
+        <h2 class="section-title reveal" data-examples-title></h2>
+        <p class="section-lead reveal" data-examples-subtitle></p>
+        <div id="examples-grid" class="examples-grid"></div>
+      </div>
+    </section>
+
+    <section id="avis" class="section section--cream" hidden>
+      <div class="container">
+        <h2 class="section-title reveal" data-reviews-title></h2>
+        <div id="reviews-summary" class="reviews-summary reveal"></div>
+        <div id="reviews-list" class="reviews-list"></div>
+      </div>
+    </section>
+
+    <section id="faq" class="section section--cream section--watermark">
+      <div class="container container--narrow">
+        <h2 class="section-title reveal" data-faq-title></h2>
+        <div id="faq-list" class="faq"></div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--night">
+      <div class="container contact-grid">
+        <div class="contact-intro reveal">
+          <h2 class="section-title section-title--light" data-contact-title></h2>
+          <p class="section-lead section-lead--light" data-contact-intro></p>
+          <p class="contact-email-line">
+            <a id="contact-email-link" class="contact-link" href="mailto:contact@sitereadyshd.fr">
+              <span data-contact-email-link></span>
+            </a>
+          </p>
+        </div>
+        <form id="contact-form" class="contact-form contact-form-card reveal" novalidate>
+          <div class="contact-form__grid">
+            <div class="field field--full">
+              <label for="name">Nom</label>
+              <input id="name" name="name" type="text" autocomplete="name" aria-required="true">
+              <p class="field-error" data-error-for="name" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="company">Entreprise</label>
+              <input id="company" name="company" type="text" autocomplete="organization">
+            </div>
+            <div class="field">
+              <label for="activity">Activité</label>
+              <input id="activity" name="activity" type="text" aria-required="true">
+              <p class="field-error" data-error-for="activity" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="city">Ville</label>
+              <input id="city" name="city" type="text" autocomplete="address-level2">
+            </div>
+            <div class="field">
+              <label for="phone">Téléphone</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel">
+              <p class="field-error" data-error-for="phone" role="alert"></p>
+            </div>
+            <div class="field field--full">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" autocomplete="email">
+              <p class="field-error" data-error-for="email" role="alert"></p>
+            </div>
+          </div>
+          <p class="field-error field-error--block" data-error-for="contact" role="alert"></p>
+          <fieldset class="field field--pills">
+            <legend data-label-has-website></legend>
+            <div class="pill-group" role="group" aria-label="Avez-vous déjà un site ?">
+              <button type="button" class="pill-choice is-selected" data-pill-group="hasWebsite" data-value="no"><span data-has-website-no></span></button>
+              <button type="button" class="pill-choice" data-pill-group="hasWebsite" data-value="yes"><span data-has-website-yes></span></button>
+            </div>
+            <input type="hidden" name="hasWebsite" value="no">
+          </fieldset>
+          <div id="website-url-wrap" class="field" hidden>
+            <label for="websiteUrl">Site actuel</label>
+            <input id="websiteUrl" name="websiteUrl" type="url" inputmode="url" placeholder="https://">
+            <p class="field-error" data-error-for="websiteUrl" role="alert"></p>
+          </div>
+          <div class="field field--pills">
+            <span class="field__legend" id="plan-label" data-label-plan></span>
+            <div class="pill-group" role="group" aria-labelledby="plan-label">
+              <button type="button" class="pill-choice is-selected" data-pill-group="plan" data-value="once"></button>
+              <button type="button" class="pill-choice" data-pill-group="plan" data-value="monthly"></button>
+              <button type="button" class="pill-choice" data-pill-group="plan" data-value="sur-mesure"></button>
+            </div>
+            <input type="hidden" id="plan" name="plan" value="once">
+          </div>
+          <input type="hidden" id="preferredStyle" name="preferredStyle" value="Dynamique">
+          <div class="field field--full">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+          </div>
+          <div class="field field--hp" aria-hidden="true">
+            <label for="company_website">Ne pas remplir</label>
+            <input id="company_website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="field field--checkbox field--full">
+            <label id="consent-label">
+              <input type="checkbox" name="consent" value="true">
+            </label>
+            <p class="field-error" data-error-for="consent" role="alert"></p>
+          </div>
+          <button type="submit" class="btn btn--pill btn--yellow contact-form__submit" data-submit-label></button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <nav aria-label="Liens légaux">
+        <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/politique-confidentialite.html">Politique de confidentialité</a>
+      </nav>
+      <p data-footer-tagline></p>
+    </div>
+  </footer>
+
+  <script src="/assets/js/content.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/theme-switch.js"></script>
+</body>
+</html>
