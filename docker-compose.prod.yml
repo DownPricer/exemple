@@ -1,4 +1,3 @@
-version: "3.8"
 
 services:
   app:
@@ -8,7 +7,7 @@ services:
     env_file:
       - ./le-blanc-express/.env
     networks:
-      - downpricer-shared
+      - client1_internal
 
   web:
     image: nginx:alpine
@@ -19,9 +18,12 @@ services:
     volumes:
       - ./nginx-docker.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
+      - client1_internal
       - downpricer-shared
 
 networks:
+  client1_internal:
+    name: client1_internal
   downpricer-shared:
     external: true
     name: ${DOWNPRICER_DOCKER_NETWORK}
