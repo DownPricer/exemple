@@ -13,4 +13,4 @@ cd "$ROOT"
 git pull --ff-only
 
 # Recrée / redémarre uniquement les services définis dans CE dépôt.
-docker compose -f docker-compose.prod.yml up -d --remove-orphans
+docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
