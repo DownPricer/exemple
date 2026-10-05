@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadOffers } from "./load-offers.mjs";
+import { loadContent } from "./load-content.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -32,7 +34,131 @@ const SELECTOR_HTML = `
   </div>
 </section>`;
 
-function patch(html) {
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function applyOffers(html, offers) {
+  let out = html;
+  if (!offers) return out;
+
+  if (offers.onceHostingAddon) {
+    out = out.replace(
+      /(<p class="plan-hosting-addon"[^>]*>)([^<]*)(<\/p>)/,
+      `$1${escapeHtml(offers.onceHostingAddon)}$3`
+    );
+  }
+  if (offers.monthlyHostingIncluded) {
+    out = out.replace(
+      /(<p class="plan-hosting-included"[^>]*>)([^<]*)(<\/p>)/,
+      `$1${escapeHtml(offers.monthlyHostingIncluded)}$3`
+    );
+  }
+  if (offers.onceHostingBullet) {
+    out = out.replace(
+      /(<li data-offers-once-bullet><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/li>)/,
+      `$1${escapeHtml(offers.onceHostingBullet)}$3`
+    );
+  }
+  if (offers.planOnceFormLabel) {
+    out = out.replace(
+      /(<option value="once">)([^<]*)(<\/option>)/,
+      `$1${escapeHtml(offers.planOnceFormLabel)}$3`
+    );
+  }
+  if (offers.faqHosting?.q && offers.faqHosting?.a) {
+    const q = escapeHtml(offers.faqHosting.q);
+    const a = escapeHtml(offers.faqHosting.a);
+    out = out.replace(
+      /(<details class="faq-item" data-offers-faq-hosting><summary>)([^<]*)( <svg class="icon"[^>]*><\/svg><\/summary><p>)([^<]*)(<\/p><\/details>)/,
+      `$1${q}$3${a}$5`
+    );
+  }
+  if (offers.faqDomain?.q && offers.faqDomain?.a) {
+    const q = escapeHtml(offers.faqDomain.q);
+    const a = escapeHtml(offers.faqDomain.a);
+    out = out.replace(
+      /(<details class="faq-item" data-offers-faq-domain><summary>)([^<]*)( <svg class="icon"[^>]*><\/svg><\/summary><p>)([^<]*)(<\/p><\/details>)/,
+      `$1${q}$3${a}$5`
+    );
+  }
+  if (offers.customDomainRibbon) {
+    out = out.replace(
+      /(<span class="ribbon-item" data-offers-ribbon-domain><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/span>)/,
+      `$1${escapeHtml(offers.customDomainRibbon)}$3`
+    );
+  }
+  if (offers.customDomainIncluded) {
+    out = out.replace(
+      /(<li data-offers-included-domain><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/li>)/,
+      `$1${escapeHtml(offers.customDomainIncluded)}$3`
+    );
+  }
+  if (offers.customDomainPricingBullet) {
+    const bullet = escapeHtml(offers.customDomainPricingBullet);
+    out = out.replace(
+      /(<li data-offers-domain-bullet-once><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/li>)/,
+      `$1${bullet}$3`
+    );
+    out = out.replace(
+      /(<li data-offers-domain-bullet-monthly><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/li>)/,
+      `$1${bullet}$3`
+    );
+  }
+  if (offers.monthlyPlanDescription) {
+    out = out.replace(
+      /(<p class="plan-description" data-offers-monthly-description>)([^<]*)(<\/p>)/,
+      `$1${escapeHtml(offers.monthlyPlanDescription)}$3`
+    );
+  }
+  if (offers.monthlyUpdatesBullet) {
+    out = out.replace(
+      /(<li data-offers-monthly-updates-bullet><svg class="icon"[^>]*><\/svg>\s*)([^<]*)(<\/li>)/,
+      `$1${escapeHtml(offers.monthlyUpdatesBullet)}$3`
+    );
+  }
+  return out;
+}
+
+function applySeo(html, content) {
+  const { seo, site } = content;
+  let out = html;
+  out = out.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
+  if (out.includes('name="description"')) {
+    out = out.replace(
+      /<meta name="description" content="[^"]*">/i,
+      `<meta name="description" content="${escapeHtml(seo.description)}">`
+    );
+  } else {
+    out = out.replace(
+      /<meta name="viewport"[^>]*>/i,
+      `$&\n  <meta name="description" content="${escapeHtml(seo.description)}">`
+    );
+  }
+  const ogTitle = escapeHtml(seo.title);
+  const ogDesc = escapeHtml(seo.description);
+  const ogUrl = escapeHtml(site.url);
+  out = out.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${ogTitle}">`);
+  out = out.replace(
+    /<meta property="og:description" content="[^"]*">/i,
+    `<meta property="og:description" content="${ogDesc}">`
+  );
+  if (!out.includes('property="og:url"')) {
+    out = out.replace(
+      /<meta property="og:type"[^>]*>/i,
+      `$&\n  <meta property="og:url" content="${ogUrl}">`
+    );
+  } else {
+    out = out.replace(/<meta property="og:url" content="[^"]*">/i, `<meta property="og:url" content="${ogUrl}">`);
+  }
+  return out;
+}
+
+function patch(html, offers, content) {
   let out = html;
 
   if (!out.includes('rel="canonical"')) {
@@ -78,6 +204,8 @@ function patch(html) {
     );
   }
 
+  out = applyOffers(out, offers);
+  if (content) out = applySeo(out, content);
   return out;
 }
 
@@ -88,9 +216,11 @@ if (!fs.existsSync(sourcePath)) {
   process.exit(1);
 }
 
+const offers = loadOffers(root);
+const content = loadContent(root);
 const source = fs.readFileSync(sourcePath, "utf8");
 fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(outPath, patch(source), "utf8");
+fs.writeFileSync(outPath, patch(source, offers, content), "utf8");
 
 const avisSource = path.join(root, "refonte-chatgpt", "SiteReady-refonte", "avis.json");
 if (fs.existsSync(avisSource)) {

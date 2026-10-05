@@ -11,18 +11,16 @@ window.SITE_CONTENT = {
   seo: {
     title: "Création de site internet en Ardèche (07) | SiteReady",
     description:
-      "SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, mise en ligne simple. Demandez votre maquette.",
+      "SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.",
     ogLocale: "fr_FR",
     serviceName: "SiteReady",
     serviceDescription:
       "Création de sites vitrines pour artisans et commerçants en Ardèche. Maquette et devis gratuits.",
     areaServed: "Ardèche",
-    telephone: "[VOTRE_TÉLÉPHONE]",
     email: "contact@sitereadyshd.fr",
-    addressLocality: "[VOTRE_VILLE]",
+    addressLocality: "Satillieu",
     addressRegion: "Ardèche",
-    postalCode: "[CODE_POSTAL]",
-    streetAddress: "[ADRESSE_POSTALE]",
+    streetAddress: "Satillieu",
   },
 
   nav: {
@@ -106,7 +104,7 @@ window.SITE_CONTENT = {
         price: "50 €/mois",
         priceNote: "sans engagement",
         bullets: [
-          "Hébergement et petites mises à jour incluses",
+          "Deux petites modifications par mois incluses",
           "Même qualité qu’en paiement unique",
           "Contact simple sur votre site",
         ],
@@ -131,7 +129,7 @@ window.SITE_CONTENT = {
     title: "Ce qui est inclus",
     items: [
       "Maquette et devis gratuits avant tout engagement",
-      "Nom de domaine à votre nom (ex. votrenom.fr)",
+      "Nom de domaine personnalisé (ex. votrenom.fr)",
       "Ajout du lien sur votre fiche Google",
       "Site pensé pour le téléphone en priorité",
       "Page contact avec vos coordonnées",
@@ -185,11 +183,7 @@ window.SITE_CONTENT = {
       },
       {
         q: "Puis-je modifier mon site plus tard ?",
-        a: "Oui. Avec la formule mensuelle, les petites modifications sont incluses. Pour la formule en une fois, on peut prévoir des mises à jour sur devis.",
-      },
-      {
-        q: "À qui appartient le nom de domaine ?",
-        a: "Il est enregistré à votre nom. Vous en restez titulaire. En cas d’arrêt de l’abonnement, on vous explique comment le conserver ou le récupérer.",
+        a: "Oui. Avec la formule mensuelle, deux petites modifications par mois sont incluses. Pour la formule en une fois, on peut prévoir des mises à jour sur devis.",
       },
     ],
   },
@@ -197,7 +191,7 @@ window.SITE_CONTENT = {
   contact: {
     title: "Demandez votre maquette gratuite",
     intro: "Répondez à quelques questions. Je vous recontacte rapidement.",
-    success: "Bien reçu. On vous recontacte sous [DÉLAI] avec votre maquette.",
+    success: "Bien reçu. On vous recontacte sous 48 heures avec votre maquette.",
     recontactDelay: "48 heures",
     email: "contact@sitereadyshd.fr",
     form: {
@@ -232,13 +226,13 @@ window.SITE_CONTENT = {
       editorTitle: "Éditeur du site",
       editorLines: [
         "SiteReady",
-        "[STATUT_JURIDIQUE]",
-        "SIRET : [NUMÉRO_SIRET]",
-        "[ADRESSE_POSTALE_COMPLÈTE]",
+        "autoentreprise",
+        "SIRET : 999954902",
+        "Satillieu",
         "E-mail : contact@sitereadyshd.fr",
       ],
       hostTitle: "Hébergeur",
-      hostLines: ["[NOM_HÉBERGEUR]", "[ADRESSE_HÉBERGEUR]"],
+      hostLines: ["OVH"],
       back: "Retour au site",
     },
     privacy: {
@@ -264,7 +258,7 @@ window.SITE_CONTENT = {
         },
         {
           title: "Responsable du traitement",
-          text: "[STATUT_JURIDIQUE] — [ADRESSE_POSTALE_COMPLÈTE] — contact@sitereadyshd.fr",
+          text: "autoentreprise — Satillieu — contact@sitereadyshd.fr",
         },
       ],
       back: "Retour au site",

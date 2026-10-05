@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "build:elegant": "node scripts/build-elegant.mjs",
-    "prestart": "npm run build:elegant",
+    "build:static": "node scripts/prerender-static.mjs",
+    "build": "npm run build:elegant && npm run build:static",
+    "prestart": "npm run build",
     "start": "node server/index.js",
     "dev": "node --watch server/index.js"
   },

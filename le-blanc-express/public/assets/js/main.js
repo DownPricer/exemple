@@ -1,5 +1,6 @@
 (function () {
   const C = window.SITE_CONTENT;
+  const O = window.SITE_OFFERS || {};
   if (!C) return;
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -43,17 +44,21 @@
       description: seo.serviceDescription,
       url: site.url,
       email: seo.email,
-      telephone: seo.telephone,
       areaServed: { "@type": "AdministrativeArea", name: seo.areaServed },
       address: {
         "@type": "PostalAddress",
         streetAddress: seo.streetAddress,
         addressLocality: seo.addressLocality,
         addressRegion: seo.addressRegion,
-        postalCode: seo.postalCode,
         addressCountry: "FR",
       },
     };
+    if (seo.telephone && !String(seo.telephone).includes("[")) {
+      schema.telephone = seo.telephone;
+    }
+    if (seo.postalCode && !String(seo.postalCode).includes("[")) {
+      schema.address.postalCode = seo.postalCode;
+    }
 
     const script = document.getElementById("json-ld");
     if (script) script.textContent = JSON.stringify(schema);
@@ -267,10 +272,23 @@
           <h3>${escapeHtml(card.name)}</h3>
           <p class="price-card__note">${escapeHtml(card.priceNote)}</p>
           <p class="price-card__price">${escapeHtml(card.price)}</p>
+          ${card.id === "once" && O.onceHostingAddon ? `<p class="price-card__hosting">${escapeHtml(O.onceHostingAddon)}</p>` : ""}
+          ${card.id === "monthly" && O.monthlyHostingIncluded ? `<p class="price-card__hosting">${escapeHtml(O.monthlyHostingIncluded)}</p>` : ""}
           <ul class="price-card__bullets">
-            ${(card.bullets || [])
-              .map((b) => `<li>${escapeHtml(b)}</li>`)
-              .join("")}
+            ${(() => {
+              const bullets = [...(card.bullets || [])];
+              if (
+                (card.id === "once" || card.id === "monthly") &&
+                O.customDomainPricingBullet &&
+                !bullets.includes(O.customDomainPricingBullet)
+              ) {
+                bullets.push(O.customDomainPricingBullet);
+              }
+              if (card.id === "once" && O.onceHostingBullet && !bullets.includes(O.onceHostingBullet)) {
+                bullets.push(O.onceHostingBullet);
+              }
+              return bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("");
+            })()}
           </ul>
           ${card.legal ? `<p class="price-card__legal">${escapeHtml(card.legal)}</p>` : ""}
           <button type="button" class="btn btn--pill btn--night price-card__cta" data-plan="${escapeHtml(card.id)}">Commencer →</button>
@@ -287,7 +305,12 @@
     fillText("[data-included-title]", C.included.title);
     const list = document.getElementById("included-list");
     if (list) {
-      list.innerHTML = C.included.items
+      const includedItems = C.included.items.map((text) =>
+        O.customDomainIncluded && text.includes("Nom de domaine")
+          ? O.customDomainIncluded
+          : text
+      );
+      list.innerHTML = includedItems
         .map(
           (item) => `
         <li class="included-item reveal">
@@ -375,7 +398,14 @@
     fillText("[data-faq-title]", C.faq.title);
     const root = document.getElementById("faq-list");
     if (!root) return;
-    root.innerHTML = C.faq.items
+    const faqItems = [...C.faq.items];
+    if (O.faqHosting?.q && O.faqHosting?.a) {
+      faqItems.splice(3, 0, O.faqHosting);
+    }
+    if (O.faqDomain?.q && O.faqDomain?.a) {
+      faqItems.push(O.faqDomain);
+    }
+    root.innerHTML = faqItems
       .map(
         (item, i) => `
       <div class="faq-item reveal">
@@ -488,7 +518,7 @@
         if (websiteWrap) websiteWrap.hidden = true;
         if (status) {
           status.className = "form-status form-status--success";
-          status.textContent = C.contact.success.replace("[DÉLAI]", C.contact.recontactDelay);
+          status.textContent = C.contact.success;
         }
       } else if (body.errors) {
         Object.entries(body.errors).forEach(([key, msg]) => showFieldError(form, key, msg));
@@ -544,7 +574,10 @@
     fillText("[data-submit-label]", f.submit);
     f.planOptions.forEach((o) => {
       const pill = form.querySelector(`[data-pill-group="plan"][data-value="${o.value}"]`);
-      if (pill) pill.textContent = o.label;
+      if (!pill) return;
+      const label =
+        o.value === "once" && O.planOnceFormLabel ? O.planOnceFormLabel : o.label;
+      pill.textContent = label;
     });
     initPillGroups(form);
     const consentLabel = document.getElementById("consent-label");

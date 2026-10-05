@@ -721,8 +721,16 @@ main {
   font-weight: 900;
   font-size: clamp(2rem, 5vw, 2.75rem);
   letter-spacing: -0.04em;
-  margin: 0.35rem 0 0.75rem;
+  margin: 0.35rem 0 0.35rem;
   color: var(--green);
+}
+
+.price-card__hosting {
+  margin: 0 0 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-on-light);
 }
 
 .price-card__bullets {
