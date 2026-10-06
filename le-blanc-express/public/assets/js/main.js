@@ -186,6 +186,7 @@
     fillText("[data-theme-switch-subtitle]", t.subtitle);
     fillText("[data-theme-switch-dynamique]", t.dynamique);
     fillText("[data-theme-switch-elegant]", t.elegant);
+    fillText("[data-theme-switch-minimal]", t.minimal);
     const elegantLink = document.querySelector("[data-theme-switch-elegant]");
     if (elegantLink) elegantLink.textContent = t.elegant;
   }

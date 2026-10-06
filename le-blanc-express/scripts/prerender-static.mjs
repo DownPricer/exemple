@@ -111,8 +111,15 @@ function injectHead(html, C) {
 }
 
 function replaceInnerById(html, id, inner) {
-  const re = new RegExp(`(<[^>]+id="${id}"[^>]*>)([\\s\\S]*?)(</[^>]+>)`, "i");
-  return html.replace(re, `$1${inner}$3`);
+  const openRe = new RegExp(`<([a-z][a-z0-9]*)[^>]*\\sid=["']${id}["'][^>]*>`, "i");
+  const m = openRe.exec(html);
+  if (!m) return html;
+  const tag = m[1];
+  const start = m.index + m[0].length;
+  const closeTag = `</${tag}>`;
+  const end = html.indexOf(closeTag, start);
+  if (end === -1) return html;
+  return html.slice(0, start) + inner + html.slice(end);
 }
 
 function replaceEmptyDataEl(html, attr, inner) {
@@ -144,6 +151,12 @@ function prerenderDynamiqueIndex(C, O) {
   html = replaceEmptyDataEl(html, "data-footer-tagline", escapeHtml(C.site.taglineFooter));
   html = replaceEmptyDataEl(html, "data-theme-switch-title", escapeHtml(C.themeSwitch.title));
   html = replaceEmptyDataEl(html, "data-theme-switch-subtitle", escapeHtml(C.themeSwitch.subtitle));
+  if (!html.includes("data-theme-switch-minimal")) {
+    html = html.replace(
+      /(<a class="theme-switch__btn" href="\/elegant\/#style-selector"[^>]*>)([^<]*)(<\/a>)/,
+      `$1$2$3\n          <a class="theme-switch__btn" href="/minimal/#style-selector" data-theme-active="minimal" data-theme-switch-minimal>${escapeHtml(C.themeSwitch.minimal)}</a>`
+    );
+  }
   html = html.replace(
     /(<button[^>]*data-theme-switch-dynamique[^>]*>)\s*(<\/button>)/i,
     `$1${escapeHtml(C.themeSwitch.dynamique)}$2`

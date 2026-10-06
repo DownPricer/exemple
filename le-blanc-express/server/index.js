@@ -293,11 +293,23 @@ app.get(["/elegant", "/elegant/*"], (req, res, next) => {
   });
 });
 
+app.get(["/minimal", "/minimal/*"], (req, res, next) => {
+  if (path.extname(req.path)) {
+    return next();
+  }
+  res.sendFile(path.join(publicDir, "minimal", "index.html"), (err) => {
+    if (err) next(err);
+  });
+});
+
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api")) {
     return next();
   }
   if (req.path.startsWith("/elegant")) {
+    return next();
+  }
+  if (req.path.startsWith("/minimal")) {
     return next();
   }
   if (path.extname(req.path)) {
