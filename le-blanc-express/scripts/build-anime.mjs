@@ -6,8 +6,8 @@ import { loadOffers } from "./load-offers.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
-const sourcePath = path.join(root, "design-minimal", "index.html");
-const outDir = path.join(root, "public", "minimal");
+const sourcePath = path.join(root, "design-anime", "index.html");
+const outDir = path.join(root, "public", "anime");
 const outPath = path.join(outDir, "index.html");
 
 function escapeHtml(value) {
@@ -26,8 +26,8 @@ function patchFormCopy(html, C, O) {
     `<legend data-label-has-website>${escapeHtml(f.hasWebsite)}</legend>`
   );
   out = out.replace(
-    /<span class="field__legend" id="plan-label" data-label-plan>[^<]*<\/span>/,
-    `<span class="field__legend" id="plan-label" data-label-plan>${escapeHtml(f.plan)}</span>`
+    /<legend data-label-plan>[^<]*<\/legend>/,
+    `<legend data-label-plan>${escapeHtml(f.plan)}</legend>`
   );
   out = out.replace(
     /<span data-has-website-no>[^<]*<\/span>/,
@@ -40,13 +40,29 @@ function patchFormCopy(html, C, O) {
   const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
   out = out.replace(/<span data-label-consent>[\s\S]*?<\/span>/, `<span data-label-consent>${consentHtml}</span>`);
   out = out.replace(
-    /<button type="submit" class="btn contact-form__submit" data-submit-label>[^<]*<\/button>/,
-    `<button type="submit" class="btn contact-form__submit" data-submit-label>${escapeHtml(f.submit)}</button>`
+    /<span class="btn__label">[^<]*<\/span>/,
+    `<span class="btn__label">${escapeHtml(f.submit)}</span>`
   );
   if (O.planOnceFormLabel) {
     out = out.replace(
-      /(<button type="button" class="pill-choice is-selected" data-pill-group="plan" data-value="once"[^>]*>)[^<]*(<\/button>)/,
+      /(<label class="pill-choice" for="plan-once">)[^<]*(<\/label>)/,
       `$1${escapeHtml(O.planOnceFormLabel)}$2`
+    );
+  }
+  const labelMap = {
+    name: f.name,
+    company: f.company,
+    activity: f.activity,
+    city: f.city,
+    phone: f.phone,
+    email: f.email,
+    websiteUrl: f.websiteUrl,
+    message: f.message,
+  };
+  for (const [id, text] of Object.entries(labelMap)) {
+    out = out.replace(
+      new RegExp(`(<label for="${id}">)[^<]*(<\\/label>)`),
+      `$1${escapeHtml(text)}$2`
     );
   }
   return out;
@@ -55,18 +71,18 @@ function patchFormCopy(html, C, O) {
 function patchStyleSelector(html, C) {
   const t = C.themeSwitch;
   const controls = `
-        <div class="theme-switch__controls" role="group" aria-label="Choisir un style de page">
+        <div class="theme-switch__controls reveal" role="group" aria-label="Choisir un style de page">
           <a class="theme-switch__btn" href="/#style-selector" data-go-dynamique data-theme-active="dynamique" data-theme-switch-dynamique>${escapeHtml(t.dynamique)}</a>
           <a class="theme-switch__btn" href="/elegant/#style-selector" data-go-elegant data-theme-active="elegant" data-theme-switch-elegant>${escapeHtml(t.elegant)}</a>
-          <button type="button" class="theme-switch__btn is-active" data-theme-active="minimal" aria-pressed="true" data-theme-switch-minimal>${escapeHtml(t.minimal)}</button>
-          <a class="theme-switch__btn" href="/anime/#style-selector" data-go-anime data-theme-active="anime" data-theme-switch-anime>${escapeHtml(t.anime)}</a>
+          <a class="theme-switch__btn" href="/minimal/#style-selector" data-go-minimal data-theme-active="minimal" data-theme-switch-minimal>${escapeHtml(t.minimal)}</a>
+          <button type="button" class="theme-switch__btn is-active" data-theme-active="anime" aria-pressed="true" data-theme-switch-anime>${escapeHtml(t.anime)}</button>
         </div>`;
   let out = html.replace(
-    /<p class="section-lead" data-theme-switch-subtitle>[^<]*<\/p>/,
-    `<p class="section-lead" data-theme-switch-subtitle>${escapeHtml(t.subtitle)}</p>`
+    /<p class="section-lead[^"]*" data-theme-switch-subtitle>[^<]*<\/p>/,
+    `<p class="section-lead reveal" data-theme-switch-subtitle>${escapeHtml(t.subtitle)}</p>`
   );
   out = out.replace(
-    /<div class="theme-switch__controls"[\s\S]*?<\/div>\s*<\/div>\s*<\/section>\s*<section id="tarifs"/,
+    /<div class="theme-switch__controls[\s\S]*?<\/div>\s*<\/div>\s*<\/section>\s*<section id="tarifs"/,
     `${controls}
       </div>
     </section>
@@ -80,22 +96,18 @@ function patch(html, content, offers) {
   let out = html;
   out = out.replace(/<!--[\s\S]*?-->/g, "");
   out = out.replace(/\smethod="post"\saction="\/api\/contact"/i, "");
-  if (!out.includes('rel="canonical"')) {
-    out = out.replace(/<head>/i, '<head>\n  <link rel="canonical" href="https://sitereadyshd.fr/">');
-  } else {
-    out = out.replace(
-      /<link rel="canonical" href="[^"]*">/i,
-      '<link rel="canonical" href="https://sitereadyshd.fr/">'
-    );
-  }
+  out = out.replace(
+    /<link rel="canonical" href="[^"]*">/i,
+    '<link rel="canonical" href="https://sitereadyshd.fr/">'
+  );
   out = patchStyleSelector(out, content);
   out = patchFormCopy(out, content, offers);
   out = out.replace(
-    /\n\s*\/\* Formulaire : validation et envoi[\s\S]*?\.then\(function \(\) \{ btn\.disabled = false; \}\);\s*\}\);\s*/,
-    "\n"
+    /\n    form\.addEventListener\('submit', function \(e\) \{[\s\S]*?\n    \}\);\n\n    \/\* =+ ANIMATIONS/,
+    "\n\n    /* =============== ANIMATIONS"
   );
-  if (!out.includes("minimal-bridge.js")) {
-    out = out.replace(/<\/body>/i, '  <script src="/minimal/minimal-bridge.js"></script>\n</body>');
+  if (!out.includes("anime-bridge.js")) {
+    out = out.replace(/<\/body>/i, '  <script src="/anime/anime-bridge.js"></script>\n</body>');
   }
   return out;
 }
@@ -110,4 +122,4 @@ const offers = loadOffers(root);
 const source = fs.readFileSync(sourcePath, "utf8");
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(outPath, patch(source, content, offers), "utf8");
-console.log(`Page Minimal générée : ${outPath}`);
+console.log(`Page Animé générée : ${outPath}`);

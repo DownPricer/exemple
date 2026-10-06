@@ -187,6 +187,15 @@ app.get(["/minimal", "/minimal/*"], (req, res, next) => {
   });
 });
 
+app.get(["/anime", "/anime/*"], (req, res, next) => {
+  if (path.extname(req.path)) {
+    return next();
+  }
+  res.sendFile(path.join(publicDir, "anime", "index.html"), (err) => {
+    if (err) next(err);
+  });
+});
+
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api")) {
     return next();
@@ -195,6 +204,9 @@ app.get("*", (req, res, next) => {
     return next();
   }
   if (req.path.startsWith("/minimal")) {
+    return next();
+  }
+  if (req.path.startsWith("/anime")) {
     return next();
   }
   if (path.extname(req.path)) {

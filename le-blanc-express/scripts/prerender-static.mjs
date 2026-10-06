@@ -157,6 +157,12 @@ function prerenderDynamiqueIndex(C, O) {
       `$1$2$3\n          <a class="theme-switch__btn" href="/minimal/#style-selector" data-theme-active="minimal" data-theme-switch-minimal>${escapeHtml(C.themeSwitch.minimal)}</a>`
     );
   }
+  if (!html.includes("data-theme-switch-anime")) {
+    html = html.replace(
+      /(<a class="theme-switch__btn" href="\/minimal\/#style-selector"[^>]*>)([^<]*)(<\/a>)/,
+      `$1$2$3\n          <a class="theme-switch__btn" href="/anime/#style-selector" data-theme-active="anime" data-theme-switch-anime>${escapeHtml(C.themeSwitch.anime)}</a>`
+    );
+  }
   html = html.replace(
     /(<button[^>]*data-theme-switch-dynamique[^>]*>)\s*(<\/button>)/i,
     `$1${escapeHtml(C.themeSwitch.dynamique)}$2`

@@ -7,8 +7,9 @@
   "scripts": {
     "build:elegant": "node scripts/build-elegant.mjs",
     "build:minimal": "node scripts/build-minimal.mjs",
+    "build:anime": "node scripts/build-anime.mjs",
     "build:static": "node scripts/prerender-static.mjs",
-    "build": "npm run build:elegant && npm run build:minimal && npm run build:static",
+    "build": "npm run build:elegant && npm run build:minimal && npm run build:anime && npm run build:static",
     "prestart": "npm run build",
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",

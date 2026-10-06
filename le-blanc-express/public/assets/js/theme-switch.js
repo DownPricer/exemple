@@ -27,6 +27,14 @@
     if (toDynamique) {
       sessionStorage.setItem(STORAGE_KEY, "dynamique");
     }
+    const toMinimal = event.target.closest("[data-go-minimal]");
+    if (toMinimal) {
+      sessionStorage.setItem(STORAGE_KEY, "minimal");
+    }
+    const toAnime = event.target.closest("[data-go-anime]");
+    if (toAnime) {
+      sessionStorage.setItem(STORAGE_KEY, "anime");
+    }
   });
 
   const page = document.body.dataset.page;

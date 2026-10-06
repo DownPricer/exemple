@@ -59,10 +59,11 @@ window.SITE_CONTENT = {
 
   themeSwitch: {
     title: "Le site qui vous correspond",
-    subtitle: "Choisissez un style : trois présentations différentes du même service.",
+    subtitle: "Choisissez un style : quatre présentations différentes du même service.",
     dynamique: "Dynamique",
     elegant: "Élégant",
     minimal: "Minimal",
+    anime: "Animé",
   },
 
   steps: {
