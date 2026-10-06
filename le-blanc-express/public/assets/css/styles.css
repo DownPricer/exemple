@@ -1183,9 +1183,12 @@ a.theme-switch__btn {
   font-weight: 500;
 }
 
-.field--checkbox input {
-  width: auto;
-  margin-top: 0.2rem;
+.field--checkbox input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: none;
+  margin-top: 0.15rem;
+  accent-color: var(--green);
 }
 
 .field--checkbox a {

@@ -581,9 +581,19 @@
       pill.textContent = label;
     });
     initPillGroups(form);
-    const consentLabel = document.getElementById("consent-label");
-    if (consentLabel) {
-      consentLabel.innerHTML = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
+    const consentText = form.querySelector("[data-label-consent]");
+    const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
+    if (consentText) {
+      consentText.innerHTML = consentHtml;
+    } else {
+      const consentLabel = document.getElementById("consent-label");
+      const existing = consentLabel?.querySelector('input[name="consent"]');
+      if (consentLabel && existing) {
+        const span = document.createElement("span");
+        span.setAttribute("data-label-consent", "");
+        span.innerHTML = consentHtml;
+        consentLabel.replaceChildren(existing, span);
+      }
     }
     const websiteWrap = document.getElementById("website-url-wrap");
     const pf = form.querySelector('[name="preferredStyle"]');

@@ -420,9 +420,10 @@
           </div>
           <div class="field field--checkbox field--full">
             <label id="consent-label">
-              <input type="checkbox" name="consent" value="true">
+              <input id="consent" type="checkbox" name="consent" value="true" required aria-describedby="error-consent">
+              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a>.</span>
             </label>
-            <p class="field-error" data-error-for="consent" role="alert"></p>
+            <p class="field-error" id="error-consent" data-error-for="consent" role="alert"></p>
           </div>
           <button type="submit" class="btn btn--pill btn--yellow contact-form__submit" data-submit-label></button>
           <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
