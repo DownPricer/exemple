@@ -11,7 +11,8 @@
     "build": "npm run build:elegant && npm run build:minimal && npm run build:static",
     "prestart": "npm run build",
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "dev": "node --watch server/index.js",
+    "test:mail": "node scripts/test-mail.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -1,13 +1,24 @@
 import "dotenv/config";
 import express from "express";
 import rateLimit from "express-rate-limit";
-import nodemailer from "nodemailer";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { logMissingEnvOnStartup } from "./env.js";
+import {
+  buildAdminNotification,
+  buildClientConfirmation,
+  createTransport,
+  isMailConfigured,
+  logSmtpError,
+  mailConfig,
+  sanitizeEmail,
+} from "./mail.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "..", "public");
 const port = Number(process.env.PORT) || 3001;
+
+logMissingEnvOnStartup();
 
 const app = express();
 app.set("trust proxy", 1);
@@ -24,80 +35,8 @@ const limiter = rateLimit({
   },
 });
 
-function createTransport() {
-  const host = process.env.SMTP_HOST;
-  if (!host) {
-    return null;
-  }
-  return nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
-    auth:
-      process.env.SMTP_USER && process.env.SMTP_PASS
-        ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-        : undefined,
-  });
-}
-
-function mailConfig() {
-  const contactTo = process.env.CONTACT_TO || process.env.MAIL_TO;
-  const mailFrom = process.env.MAIL_FROM || "SiteReady <noreply@sitereadyshd.fr>";
-  const replyTo =
-    process.env.CONTACT_REPLY_TO ||
-    process.env.MAIL_REPLY_TO ||
-    contactTo ||
-    "contact@sitereadyshd.fr";
-  const recontactDelay = process.env.CONTACT_RECONTACT_DELAY || "48 heures";
-  const publicEmail = process.env.CONTACT_PUBLIC_EMAIL || "contact@sitereadyshd.fr";
-  return { contactTo, mailFrom, replyTo, recontactDelay, publicEmail };
-}
-
-/** Supprime les retours à la ligne pour les en-têtes MIME (injection). */
-function sanitizeHeader(value) {
-  if (value == null) return "";
-  return String(value).replace(/[\r\n]+/g, " ").trim();
-}
-
-function sanitizeEmail(value) {
-  const s = sanitizeHeader(value);
-  if (!s || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) return "";
-  return s;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
-}
-
-const PLAN_LABELS = {
-  once: "En une fois",
-  monthly: "Par mois",
-  "sur-mesure": "Sur mesure",
-  unknown: "À définir",
-  indecis: "À définir",
-  essentiel: "Essentiel",
-  signature: "Signature",
-};
-
-function formatPlan(plan) {
-  const key = String(plan || "").trim();
-  return PLAN_LABELS[key] || key || "—";
-}
-
-function formatSubmissionDate() {
-  return new Date().toLocaleString("fr-FR", {
-    timeZone: "Europe/Paris",
-    dateStyle: "full",
-    timeStyle: "short",
-  });
 }
 
 function normalizeContactPayload(body) {
@@ -153,61 +92,11 @@ function validateContact(body) {
   return errors;
 }
 
-function buildAdminNotification(data) {
-  const city = data.city || "—";
-  const subject = sanitizeHeader(
-    `Nouvelle demande — ${data.name} (${data.activity}, ${city})`
-  );
-
-  const lines = [
-    `Date : ${formatSubmissionDate()}`,
-    `Nom : ${data.name || "—"}`,
-    `Entreprise : ${data.company || "—"}`,
-    `Activité : ${data.activity || "—"}`,
-    `Ville : ${data.city || "—"}`,
-    `Téléphone : ${data.phone || "—"}`,
-    `E-mail : ${data.email || "—"}`,
-    `Déjà un site : ${data.hasWebsite === "yes" ? "Oui" : data.hasWebsite === "no" ? "Non" : "—"}`,
-    `Adresse du site : ${data.websiteUrl || "—"}`,
-    `Formule envisagée : ${formatPlan(data.plan)}`,
-    `Style préféré : ${data.preferredStyle || "—"}`,
-    `Message : ${data.message || "—"}`,
-  ];
-
-  return {
-    subject,
-    text: lines.join("\n"),
-  };
-}
-
-function buildClientConfirmation(data, recontactDelay, replyTo) {
-  const name = data.name || "Bonjour";
-  const subject = sanitizeHeader("Votre demande est bien reçue — SiteReady");
-
-  const text = [
-    `Bonjour ${name},`,
-    "",
-    `merci pour votre message. Nous revenons vers vous sous ${recontactDelay} avec votre maquette et votre devis, gratuitement.`,
-    "",
-    "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message.",
-    "",
-    "— SiteReady, sitereadyshd.fr",
-  ].join("\n");
-
-  const html = `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:24px 16px;background:#f6f5ef;font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.55;color:#173d2e;">
-  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:24px 20px;">
-    <p style="margin:0 0 16px;">Bonjour ${escapeHtml(name)},</p>
-    <p style="margin:0 0 16px;">merci pour votre message. Nous revenons vers vous sous <strong>${escapeHtml(recontactDelay)}</strong> avec votre maquette et votre devis, gratuitement.</p>
-    <p style="margin:0 0 16px;color:#656f66;font-size:15px;">Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message.</p>
-    <p style="margin:0;">— SiteReady, <a href="https://sitereadyshd.fr" style="color:#173d2e;">sitereadyshd.fr</a></p>
-  </div>
-</body>
-</html>`;
-
-  return { subject, text, html, replyTo: sanitizeEmail(replyTo) };
+function unavailableMessage(publicEmail) {
+  if (publicEmail) {
+    return `L’envoi est momentanément indisponible. Écrivez-nous à ${publicEmail}.`;
+  }
+  return "L’envoi est momentanément indisponible. Réessayez plus tard ou contactez-nous par un autre canal.";
 }
 
 app.post("/api/contact", limiter, async (req, res) => {
@@ -224,22 +113,16 @@ app.post("/api/contact", limiter, async (req, res) => {
   }
 
   const data = normalizeContactPayload(raw);
-  const transport = createTransport();
   const { contactTo, mailFrom, replyTo, recontactDelay, publicEmail } = mailConfig();
+  const transport = createTransport();
 
-  if (!transport) {
-    console.error("SMTP non configuré : définissez SMTP_HOST (et identifiants) dans .env");
+  if (!isMailConfigured() || !transport) {
+    console.error(
+      "Envoi refusé : configuration e-mail incomplète (voir le message au démarrage du serveur)."
+    );
     return res.status(503).json({
       ok: false,
-      error: `L’envoi est momentanément indisponible. Écrivez-nous à ${publicEmail}.`,
-    });
-  }
-
-  if (!contactTo) {
-    console.error("CONTACT_TO non configuré dans .env");
-    return res.status(503).json({
-      ok: false,
-      error: `L’envoi est momentanément indisponible. Écrivez-nous à ${publicEmail}.`,
+      error: unavailableMessage(publicEmail),
     });
   }
 
@@ -255,10 +138,12 @@ app.post("/api/contact", limiter, async (req, res) => {
       text: adminMail.text,
     });
   } catch (error) {
-    console.error("Erreur envoi e-mail notification (admin):", error);
+    logSmtpError("notification (admin)", error);
     return res.status(500).json({
       ok: false,
-      error: `L’envoi a échoué. Réessayez ou écrivez-nous à ${publicEmail}.`,
+      error: publicEmail
+        ? `L’envoi a échoué. Réessayez ou écrivez-nous à ${publicEmail}.`
+        : "L’envoi a échoué. Réessayez plus tard.",
     });
   }
 
@@ -275,7 +160,7 @@ app.post("/api/contact", limiter, async (req, res) => {
         html: confirmation.html,
       });
     } catch (error) {
-      console.error("Erreur envoi e-mail confirmation (client):", error);
+      logSmtpError("confirmation (client)", error);
     }
   }
 
