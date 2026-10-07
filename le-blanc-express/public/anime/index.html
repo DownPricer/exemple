@@ -7,9 +7,16 @@
   <meta property="og:title" content="Création de site internet en Ardèche (07) | SiteReady">
   <meta property="og:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sitereadyshd.fr">
+  <meta property="og:url" content="https://sitereadyshd.fr/anime/">
   <meta property="og:locale" content="fr_FR">
-  <link rel="canonical" href="https://sitereadyshd.fr/">
+  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Création de site internet en Ardèche (07) | SiteReady">
+  <meta name="twitter:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
+  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <link rel="canonical" href="https://sitereadyshd.fr/anime/">
   <title>Création de site internet en Ardèche (07) | SiteReady</title>
   <meta name="theme-color" content="#0a0a0b">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +58,8 @@
     ul,ol{padding:0;list-style:none}
     a{color:inherit}
     svg{display:block;max-width:100%}
-    section[id]{scroll-margin-top:0}
+    html{scroll-padding-top:calc(var(--header) + 1.25rem)}
+    section[id]{scroll-margin-top:calc(var(--header) + 1.25rem)}
     :focus-visible{outline:3px solid var(--focus,var(--accent));outline-offset:4px}
     .skip-link{position:absolute;left:var(--pad);top:-100px;background:var(--accent);color:var(--on-accent);padding:12px 16px;z-index:200;font-weight:600}
     .skip-link:focus{top:12px}
@@ -216,11 +224,13 @@
     .hz-pin .example-card{flex:0 0 clamp(380px,30vw,520px)}
 
     /* ----- FAQ ----- */
-    .faq{margin-top:clamp(48px,7vw,88px);border-top:1px solid var(--line)}
+    .faq{margin-top:clamp(48px,7vw,88px);border-top:1px solid var(--line);min-width:0}
+    #faq .container--narrow{width:min(100% - 1.25rem,720px)}
     .faq-item{border-bottom:1px solid var(--line)}
     .faq-item h3{font-size:inherit;font-weight:inherit}
-    .faq-item__trigger{width:100%;display:flex;justify-content:space-between;align-items:center;gap:24px;text-align:left;background:none;border:0;border-radius:0;padding:28px 0;font:inherit;font-family:var(--display);font-stretch:75%;font-weight:600;font-size:clamp(1.5rem,2.2vw,2.1rem);line-height:1.15;color:var(--ink);cursor:pointer}
-    .faq-item__q{display:block;transition:transform .4s var(--ease)}
+    .faq-item__trigger{width:100%;max-width:100%;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:.75rem 1rem;text-align:left;background:none;border:0;border-radius:0;padding:28px 0;font:inherit;font-family:var(--display);font-stretch:75%;font-weight:600;font-size:clamp(1.05rem,4.5vw,2.1rem);line-height:1.2;color:var(--ink);cursor:pointer}
+    .faq-item__q{display:block;min-width:0;overflow-wrap:break-word;hyphens:auto;transition:transform .4s var(--ease)}
+    .faq-item__icon{margin-top:.15em}
     .faq-item__trigger:hover .faq-item__q{transform:translateX(12px)}
     .faq-item__icon{flex:none;position:relative;width:26px;height:26px;color:var(--accent)}
     .faq-item__icon::before,.faq-item__icon::after{content:"";position:absolute;left:0;top:12px;width:26px;height:2.5px;background:currentColor;transition:transform .4s var(--ease)}
@@ -350,6 +360,7 @@
       .marquee__group + .marquee__group{display:none}
     }
   </style>
+<noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="anime">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -855,6 +866,15 @@
     toggle.addEventListener('click', function () { setNav(!navOpen); });
     nav.addEventListener('click', function (e) { if (e.target.closest('a')) setNav(false); });
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && navOpen) { setNav(false); toggle.focus(); } });
+
+    (function () {
+      var list = document.getElementById('faq-list');
+      var section = document.getElementById('faq');
+      if (!list || !section) return;
+      section.querySelectorAll('.faq-item').forEach(function (el) {
+        if (!list.contains(el)) el.remove();
+      });
+    })();
 
     /* FAQ : repliée par défaut (le contenu reste lisible sans JavaScript) */
     $$('.faq-item__trigger').forEach(function (btn) {

@@ -3,6 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
+import { injectSeoHead } from "./seo-head.mjs";
+import { replaceInnerById } from "./replace-inner.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -14,6 +16,13 @@ function escapeHtml(value) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function cardHostingLine(card, O) {
+  if (card.hostingLine) return card.hostingLine;
+  if (card.id === "once") return O.onceHostingAddon || "";
+  if (card.id === "monthly") return O.monthlyHostingIncluded || "";
+  return "";
 }
 
 function buildFaqItems(C, O) {
@@ -37,13 +46,13 @@ function buildPricingHtml(C, O) {
       if (card.id === "once" && O.onceHostingBullet && !bullets.includes(O.onceHostingBullet)) {
         bullets.push(O.onceHostingBullet);
       }
+      const hosting = cardHostingLine(card, O);
       return `
         <article class="price-card reveal${card.id === "monthly" ? " price-card--highlight" : ""}">
           <h3>${escapeHtml(card.name)}</h3>
           <p class="price-card__note">${escapeHtml(card.priceNote)}</p>
           <p class="price-card__price">${escapeHtml(card.price)}</p>
-          ${card.id === "once" && O.onceHostingAddon ? `<p class="price-card__hosting">${escapeHtml(O.onceHostingAddon)}</p>` : ""}
-          ${card.id === "monthly" && O.monthlyHostingIncluded ? `<p class="price-card__hosting">${escapeHtml(O.monthlyHostingIncluded)}</p>` : ""}
+          ${hosting ? `<p class="price-card__hosting">${escapeHtml(hosting)}</p>` : ""}
           <ul class="price-card__bullets">
             ${bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}
           </ul>
@@ -56,7 +65,7 @@ function buildPricingHtml(C, O) {
 
 function buildSchema(C) {
   const { seo, site } = C;
-  const schema = {
+  return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: seo.serviceName,
@@ -71,55 +80,7 @@ function buildSchema(C) {
       addressRegion: seo.addressRegion,
       addressCountry: "FR",
     },
-  };
-  return JSON.stringify(schema);
-}
-
-function injectHead(html, C) {
-  const { seo, site } = C;
-  let out = html;
-  out = out.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
-
-  const metaBlock = `
-  <meta name="description" content="${escapeHtml(seo.description)}">
-  <meta property="og:title" content="${escapeHtml(seo.title)}">
-  <meta property="og:description" content="${escapeHtml(seo.description)}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="${escapeHtml(site.url)}">
-  <meta property="og:locale" content="${escapeHtml(seo.ogLocale)}">
-  <link rel="canonical" href="${escapeHtml(site.url)}/">`;
-
-  if (out.includes('name="description"')) {
-    out = out.replace(/<meta name="description"[^>]*>\s*/i, "");
-    out = out.replace(/<meta property="og:title"[^>]*>\s*/i, "");
-    out = out.replace(/<meta property="og:description"[^>]*>\s*/i, "");
-    out = out.replace(/<meta property="og:type"[^>]*>\s*/i, "");
-    out = out.replace(/<meta property="og:url"[^>]*>\s*/i, "");
-    out = out.replace(/<meta property="og:locale"[^>]*>\s*/i, "");
-    out = out.replace(/<link rel="canonical"[^>]*>\s*/i, "");
-  }
-
-  out = out.replace(/<meta name="viewport"[^>]*>/i, `$&${metaBlock}`);
-
-  const schema = buildSchema(C);
-  out = out.replace(
-    /<script type="application\/ld\+json" id="json-ld">[\s\S]*?<\/script>/i,
-    `<script type="application/ld+json" id="json-ld">${schema}</script>`
-  );
-
-  return out;
-}
-
-function replaceInnerById(html, id, inner) {
-  const openRe = new RegExp(`<([a-z][a-z0-9]*)[^>]*\\sid=["']${id}["'][^>]*>`, "i");
-  const m = openRe.exec(html);
-  if (!m) return html;
-  const tag = m[1];
-  const start = m.index + m[0].length;
-  const closeTag = `</${tag}>`;
-  const end = html.indexOf(closeTag, start);
-  if (end === -1) return html;
-  return html.slice(0, start) + inner + html.slice(end);
+  });
 }
 
 function replaceEmptyDataEl(html, attr, inner) {
@@ -127,10 +88,96 @@ function replaceEmptyDataEl(html, attr, inner) {
   return html.replace(re, `$1${inner}$2`);
 }
 
+function replaceDataText(html, attr, inner) {
+  const re = new RegExp(`(<[^>]+${attr}[^>]*>)([^<]*)(</)`, "i");
+  return html.replace(re, `$1${inner}$3`);
+}
+
+function rebuildFaqSection(html, C, O) {
+  const faqHtml = buildFaqItems(C, O)
+    .map(
+      (item, i) => `
+      <div class="faq-item reveal">
+        <h3>
+          <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-${i}" id="faq-trigger-${i}">
+            <span class="faq-item__label">${escapeHtml(item.q)}</span>
+            <span class="faq-item__icon" aria-hidden="true"></span>
+          </button>
+        </h3>
+        <div id="faq-panel-${i}" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-${i}" hidden>
+          <p>${escapeHtml(item.a)}</p>
+        </div>
+      </div>`
+    )
+    .join("");
+
+  const section = `<section id="faq" class="section section--cream section--watermark">
+      <div class="container container--narrow">
+        <h2 class="section-title reveal" data-faq-title>${escapeHtml(C.faq.title)}</h2>
+        <div id="faq-list" class="faq">${faqHtml}
+        </div>
+      </div>
+    </section>`;
+
+  return html.replace(/<section id="faq"[\s\S]*?<\/section>\s*(?=<section id="contact")/i, `${section}\n\n    `);
+}
+
+function injectNoScriptFallback(html) {
+  const block =
+    '<noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>';
+  if (html.includes("<noscript><style>.faq-item__panel")) return html;
+  return html.replace("</head>", `${block}\n</head>`);
+}
+
+function injectContactFormCopy(html, C, O) {
+  const f = C.contact.form;
+  let out = html;
+  out = replaceDataText(out, "data-label-has-website", escapeHtml(f.hasWebsite));
+  out = replaceDataText(out, "data-has-website-no", escapeHtml(f.hasWebsiteNo));
+  out = replaceDataText(out, "data-has-website-yes", escapeHtml(f.hasWebsiteYes));
+  out = replaceDataText(out, "data-label-plan", escapeHtml(f.plan));
+  out = replaceDataText(out, "data-submit-label", escapeHtml(f.submit));
+  out = replaceDataText(out, "data-nav-cta", escapeHtml(C.nav.cta));
+  out = replaceDataText(out, "data-hero-badge", escapeHtml(C.hero.badge));
+
+  for (const opt of f.planOptions) {
+    const label =
+      opt.value === "once" && O.planOnceFormLabel ? O.planOnceFormLabel : opt.label;
+    out = out.replace(
+      new RegExp(
+        `(<button type="button" class="pill-choice[^"]*" data-pill-group="plan" data-value="${opt.value}"[^>]*>)\\s*(</button>)`,
+        "i"
+      ),
+      `$1${escapeHtml(label)}$2`
+    );
+  }
+  return out;
+}
+
+function injectHeroFallback(html, C) {
+  const m = C.hero.phoneMock;
+  const inner = `
+        <div class="hero__static-mock" aria-hidden="true">
+          <p class="hero__static-mock-brand">${escapeHtml(m.brand)}</p>
+          <p class="hero__static-mock-city">${escapeHtml(m.city)}</p>
+          <p class="hero__static-mock-cta">${escapeHtml(m.cta)}</p>
+        </div>`;
+  return replaceInnerById(html, "hero-phone", inner);
+}
+
+function ensureOffersScript(html) {
+  if (html.includes("offers-shared.js")) return html;
+  return html.replace(
+    '<script src="/assets/js/content.js"></script>',
+    '<script src="/assets/js/offers-shared.js"></script>\n  <script src="/assets/js/content.js"></script>'
+  );
+}
+
 function prerenderDynamiqueIndex(C, O) {
   const indexPath = path.join(publicDir, "index.html");
   let html = fs.readFileSync(indexPath, "utf8");
-  html = injectHead(html, C);
+  html = injectSeoHead(html, C.seo, C.site, `${C.site.url}/`);
+  html = injectNoScriptFallback(html);
 
   html = replaceEmptyDataEl(html, "data-hero-title", escapeHtml(C.hero.title));
   html = replaceEmptyDataEl(html, "data-hero-subtitle", escapeHtml(C.hero.subtitle));
@@ -151,18 +198,7 @@ function prerenderDynamiqueIndex(C, O) {
   html = replaceEmptyDataEl(html, "data-footer-tagline", escapeHtml(C.site.taglineFooter));
   html = replaceEmptyDataEl(html, "data-theme-switch-title", escapeHtml(C.themeSwitch.title));
   html = replaceEmptyDataEl(html, "data-theme-switch-subtitle", escapeHtml(C.themeSwitch.subtitle));
-  if (!html.includes("data-theme-switch-minimal")) {
-    html = html.replace(
-      /(<a class="theme-switch__btn" href="\/elegant\/#style-selector"[^>]*>)([^<]*)(<\/a>)/,
-      `$1$2$3\n          <a class="theme-switch__btn" href="/minimal/#style-selector" data-theme-active="minimal" data-theme-switch-minimal>${escapeHtml(C.themeSwitch.minimal)}</a>`
-    );
-  }
-  if (!html.includes("data-theme-switch-anime")) {
-    html = html.replace(
-      /(<a class="theme-switch__btn" href="\/minimal\/#style-selector"[^>]*>)([^<]*)(<\/a>)/,
-      `$1$2$3\n          <a class="theme-switch__btn" href="/anime/#style-selector" data-theme-active="anime" data-theme-switch-anime>${escapeHtml(C.themeSwitch.anime)}</a>`
-    );
-  }
+
   html = html.replace(
     /(<button[^>]*data-theme-switch-dynamique[^>]*>)\s*(<\/button>)/i,
     `$1${escapeHtml(C.themeSwitch.dynamique)}$2`
@@ -170,6 +206,14 @@ function prerenderDynamiqueIndex(C, O) {
   html = html.replace(
     /(<a[^>]*data-theme-switch-elegant[^>]*>)\s*(<\/a>)/i,
     `$1${escapeHtml(C.themeSwitch.elegant)}$2`
+  );
+  html = html.replace(
+    /(<a[^>]*data-theme-switch-minimal[^>]*>)\s*(<\/a>)/i,
+    `$1${escapeHtml(C.themeSwitch.minimal)}$2`
+  );
+  html = html.replace(
+    /(<a[^>]*data-theme-switch-anime[^>]*>)\s*(<\/a>)/i,
+    `$1${escapeHtml(C.themeSwitch.anime)}$2`
   );
 
   const navHtml = C.nav.links
@@ -188,7 +232,6 @@ function prerenderDynamiqueIndex(C, O) {
     )
     .join("");
   html = replaceInnerById(html, "steps-list", stepsHtml);
-
   html = replaceInnerById(html, "pricing-grid", buildPricingHtml(C, O));
 
   const includedItems = C.included.items.map((text) =>
@@ -211,28 +254,13 @@ function prerenderDynamiqueIndex(C, O) {
         <figure class="example-card reveal">
           <span class="example-card__label">${escapeHtml(item.label)}</span>
           <figcaption class="example-card__trade">${escapeHtml(item.trade)}</figcaption>
+          <p class="example-card__mock-title">${escapeHtml(item.mockTitle)}</p>
         </figure>`
     )
     .join("");
   html = replaceInnerById(html, "examples-grid", examplesHtml);
 
-  const faqHtml = buildFaqItems(C, O)
-    .map(
-      (item, i) => `
-      <div class="faq-item reveal">
-        <h3>
-          <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-${i}" id="faq-trigger-${i}">
-            ${escapeHtml(item.q)}
-            <span class="faq-item__icon" aria-hidden="true"></span>
-          </button>
-        </h3>
-        <div id="faq-panel-${i}" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-${i}" hidden>
-          <p>${escapeHtml(item.a)}</p>
-        </div>
-      </div>`
-    )
-    .join("");
-  html = replaceInnerById(html, "faq-list", faqHtml);
+  html = rebuildFaqSection(html, C, O);
 
   const resultsHtml = C.problem.results
     .map(
@@ -245,19 +273,38 @@ function prerenderDynamiqueIndex(C, O) {
     .join("");
   html = replaceInnerById(html, "search-results", resultsHtml);
   html = html.replace(
-    /<span id="fake-search-text" class="search-demo__query">\s*<\/span>/i,
+    /<span id="fake-search-text" class="search-demo__query">[\s\S]*?<\/span>/i,
     `<span id="fake-search-text" class="search-demo__query">${escapeHtml(C.problem.searchQuery)}</span>`
+  );
+
+  html = injectHeroFallback(html, C);
+  html = injectContactFormCopy(html, C, O);
+  html = ensureOffersScript(html);
+
+  const schema = buildSchema(C);
+  html = html.replace(
+    /<script type="application\/ld\+json" id="json-ld">[\s\S]*?<\/script>/i,
+    `<script type="application/ld+json" id="json-ld">${schema}</script>`
   );
 
   fs.writeFileSync(indexPath, html, "utf8");
   console.log(`Prérendu : ${indexPath}`);
 }
 
-function prerenderLegalPage(filename, bodyClass, pageKey, C) {
+function prerenderLegalPage(filename, pageKey, C) {
   const filePath = path.join(publicDir, filename);
   const isMentions = pageKey === "mentions";
   const block = isMentions ? C.legal.mentions : C.legal.privacy;
   const title = `${block.title} | SiteReady`;
+  const description = isMentions
+    ? `Mentions légales du site SiteReady (sitereadyshd.fr).`
+    : `Politique de confidentialité et traitement des données du formulaire de contact SiteReady.`;
+  const pageUrl = `${C.site.url}/${filename}`;
+  const seo = {
+    ...C.seo,
+    title,
+    description,
+  };
 
   let mainHtml;
   if (isMentions) {
@@ -278,14 +325,13 @@ function prerenderLegalPage(filename, bodyClass, pageKey, C) {
       <p><a href="/">${escapeHtml(block.back)}</a></p>`;
   }
 
-  const html = `<!DOCTYPE html>
+  let html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
   <title>${escapeHtml(title)}</title>
-  <meta name="description" content="${escapeHtml(block.title)} — SiteReady">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -300,6 +346,7 @@ function prerenderLegalPage(filename, bodyClass, pageKey, C) {
 </html>
 `;
 
+  html = injectSeoHead(html, seo, C.site, pageUrl);
   fs.writeFileSync(filePath, html, "utf8");
   console.log(`Prérendu : ${filePath}`);
 }
@@ -307,5 +354,5 @@ function prerenderLegalPage(filename, bodyClass, pageKey, C) {
 const C = loadContent(root);
 const O = loadOffers(root);
 prerenderDynamiqueIndex(C, O);
-prerenderLegalPage("mentions-legales.html", "mentions", "mentions", C);
-prerenderLegalPage("politique-confidentialite.html", "privacy", "privacy", C);
+prerenderLegalPage("mentions-legales.html", "mentions", C);
+prerenderLegalPage("politique-confidentialite.html", "privacy", C);

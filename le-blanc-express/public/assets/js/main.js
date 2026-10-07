@@ -6,6 +6,17 @@
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let searchTypingTimer = null;
 
+  function scrollAnchorOffset(extra = 20) {
+    const header = document.querySelector(".site-header");
+    return header ? header.getBoundingClientRect().height + extra : 88;
+  }
+
+  function scrollToElement(el, extra = 20) {
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - scrollAnchorOffset(extra);
+    window.scrollTo({ top, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  }
+
   function escapeHtml(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -36,6 +47,13 @@
     setMeta("og:type", "website", true);
     setMeta("og:url", site.url, true);
     setMeta("og:locale", seo.ogLocale, true);
+    if (seo.ogImage) {
+      setMeta("og:image", seo.ogImage, true);
+      setMeta("og:image:width", String(seo.ogImageWidth || 1200), true);
+      setMeta("og:image:height", String(seo.ogImageHeight || 630), true);
+      setMeta("twitter:card", "summary_large_image");
+      setMeta("twitter:image", seo.ogImage);
+    }
 
     const schema = {
       "@context": "https://schema.org",
@@ -143,11 +161,7 @@
   function selectPlanAndScroll(planId) {
     const form = document.getElementById("contact-form");
     if (form) setPillGroup(form, "plan", planId);
-    const contact = document.getElementById("contact");
-    if (contact) {
-      const top = contact.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: prefersReducedMotion ? "auto" : "smooth" });
-    }
+    scrollToElement(document.getElementById("contact"));
     const firstField = form?.querySelector("#name");
     if (firstField) setTimeout(() => firstField.focus({ preventScroll: true }), 400);
   }
@@ -274,8 +288,12 @@
           <h3>${escapeHtml(card.name)}</h3>
           <p class="price-card__note">${escapeHtml(card.priceNote)}</p>
           <p class="price-card__price">${escapeHtml(card.price)}</p>
-          ${card.id === "once" && O.onceHostingAddon ? `<p class="price-card__hosting">${escapeHtml(O.onceHostingAddon)}</p>` : ""}
-          ${card.id === "monthly" && O.monthlyHostingIncluded ? `<p class="price-card__hosting">${escapeHtml(O.monthlyHostingIncluded)}</p>` : ""}
+          ${(() => {
+            const line =
+              card.hostingLine ||
+              (card.id === "once" ? O.onceHostingAddon : card.id === "monthly" ? O.monthlyHostingIncluded : "");
+            return line ? `<p class="price-card__hosting">${escapeHtml(line)}</p>` : "";
+          })()}
           <ul class="price-card__bullets">
             ${(() => {
               const bullets = [...(card.bullets || [])];
@@ -396,10 +414,20 @@
     }
   }
 
+  function purgeOrphanFaqItems() {
+    const list = document.getElementById("faq-list");
+    const section = document.getElementById("faq");
+    if (!list || !section) return;
+    section.querySelectorAll(".faq-item").forEach((el) => {
+      if (!list.contains(el)) el.remove();
+    });
+  }
+
   function initFaq() {
     fillText("[data-faq-title]", C.faq.title);
     const root = document.getElementById("faq-list");
     if (!root) return;
+    purgeOrphanFaqItems();
     const faqItems = [...C.faq.items];
     if (O.faqHosting?.q && O.faqHosting?.a) {
       faqItems.splice(3, 0, O.faqHosting);
@@ -413,7 +441,7 @@
       <div class="faq-item reveal">
         <h3>
           <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-${i}" id="faq-trigger-${i}">
-            ${escapeHtml(item.q)}
+            <span class="faq-item__label">${escapeHtml(item.q)}</span>
             <span class="faq-item__icon" aria-hidden="true"></span>
           </button>
         </h3>

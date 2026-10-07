@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
+import { injectSeoHead } from "./seo-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -68,6 +69,13 @@ function patchFormCopy(html, C, O) {
   return out;
 }
 
+function injectNoScriptAnime(html) {
+  const block =
+    '<noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>';
+  if (html.includes("faq-item__panel[hidden]")) return html;
+  return html.replace("</head>", `${block}\n</head>`);
+}
+
 function patchStyleSelector(html, C) {
   const t = C.themeSwitch;
   const controls = `
@@ -102,6 +110,8 @@ function patch(html, content, offers) {
   );
   out = patchStyleSelector(out, content);
   out = patchFormCopy(out, content, offers);
+  out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/anime/`);
+  out = injectNoScriptAnime(out);
   out = out.replace(
     /\n    form\.addEventListener\('submit', function \(e\) \{[\s\S]*?\n    \}\);\n\n    \/\* =+ ANIMATIONS/,
     "\n\n    /* =============== ANIMATIONS"

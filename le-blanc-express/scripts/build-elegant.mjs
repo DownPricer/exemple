@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadOffers } from "./load-offers.mjs";
 import { loadContent } from "./load-content.mjs";
+import { injectSeoHead } from "./seo-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -128,36 +129,7 @@ function applyOffers(html, offers) {
 
 function applySeo(html, content) {
   const { seo, site } = content;
-  let out = html;
-  out = out.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
-  if (out.includes('name="description"')) {
-    out = out.replace(
-      /<meta name="description" content="[^"]*">/i,
-      `<meta name="description" content="${escapeHtml(seo.description)}">`
-    );
-  } else {
-    out = out.replace(
-      /<meta name="viewport"[^>]*>/i,
-      `$&\n  <meta name="description" content="${escapeHtml(seo.description)}">`
-    );
-  }
-  const ogTitle = escapeHtml(seo.title);
-  const ogDesc = escapeHtml(seo.description);
-  const ogUrl = escapeHtml(site.url);
-  out = out.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${ogTitle}">`);
-  out = out.replace(
-    /<meta property="og:description" content="[^"]*">/i,
-    `<meta property="og:description" content="${ogDesc}">`
-  );
-  if (!out.includes('property="og:url"')) {
-    out = out.replace(
-      /<meta property="og:type"[^>]*>/i,
-      `$&\n  <meta property="og:url" content="${ogUrl}">`
-    );
-  } else {
-    out = out.replace(/<meta property="og:url" content="[^"]*">/i, `<meta property="og:url" content="${ogUrl}">`);
-  }
-  return out;
+  return injectSeoHead(html, seo, site, `${site.url}/elegant/`);
 }
 
 function patch(html, offers, content) {

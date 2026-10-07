@@ -13,6 +13,9 @@ window.SITE_CONTENT = {
     description:
       "SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.",
     ogLocale: "fr_FR",
+    ogImage: "https://sitereadyshd.fr/assets/img/og-share.png",
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
     serviceName: "SiteReady",
     serviceDescription:
       "Création de sites vitrines pour artisans et commerçants en Ardèche. Maquette et devis gratuits.",
@@ -94,6 +97,7 @@ window.SITE_CONTENT = {
         name: "En une fois",
         price: "500 €",
         priceNote: "à partir de",
+        hostingLine: "+ hébergement 5 €/mois",
         bullets: [
           "Site vitrine pour présenter votre activité",
           "Pensé pour le téléphone",
@@ -105,6 +109,7 @@ window.SITE_CONTENT = {
         name: "Par mois",
         price: "50 €/mois",
         priceNote: "sans engagement",
+        hostingLine: "Hébergement inclus",
         bullets: [
           "Deux petites modifications par mois incluses",
           "Même qualité qu’en paiement unique",

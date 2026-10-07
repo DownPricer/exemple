@@ -3,11 +3,19 @@
   const STORAGE_KEY = "siteready-design";
   document.body.dataset.page = "minimal";
 
-  function scrollToSelector() {
-    const el = document.getElementById("style-selector");
+  function scrollAnchorOffset(extra = 20) {
+    const header = document.querySelector(".site-header");
+    return header ? header.getBoundingClientRect().height + extra : 88;
+  }
+
+  function scrollToElement(el) {
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+    const top = el.getBoundingClientRect().top + window.scrollY - scrollAnchorOffset();
     window.scrollTo({ top, behavior: "smooth" });
+  }
+
+  function scrollToSelector() {
+    scrollToElement(document.getElementById("style-selector"));
   }
 
   function setActive(design) {
@@ -64,7 +72,7 @@
   document.querySelectorAll(".price-card__cta").forEach((btn) => {
     btn.addEventListener("click", () => {
       setPillGroup("plan", btn.getAttribute("data-plan"));
-      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+      scrollToElement(document.getElementById("contact"));
     });
   });
 

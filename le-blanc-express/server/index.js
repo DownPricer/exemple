@@ -130,13 +130,16 @@ app.post("/api/contact", limiter, async (req, res) => {
   const adminMail = buildAdminNotification(data);
 
   try {
-    await transport.sendMail({
+    const adminResult = await transport.sendMail({
       from: mailFrom,
       to: contactTo,
       replyTo: clientReplyTo || undefined,
       subject: adminMail.subject,
       text: adminMail.text,
     });
+    console.log(
+      `Notification formulaire envoyée (destinataire admin configuré dans CONTACT_TO, messageId: ${adminResult.messageId || "—"})`
+    );
   } catch (error) {
     logSmtpError("notification (admin)", error);
     return res.status(500).json({

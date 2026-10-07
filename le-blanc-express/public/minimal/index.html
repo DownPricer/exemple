@@ -7,9 +7,16 @@
   <meta property="og:title" content="Création de site internet en Ardèche (07) | SiteReady">
   <meta property="og:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sitereadyshd.fr">
+  <meta property="og:url" content="https://sitereadyshd.fr/minimal/">
   <meta property="og:locale" content="fr_FR">
-  <link rel="canonical" href="https://sitereadyshd.fr/">
+  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Création de site internet en Ardèche (07) | SiteReady">
+  <meta name="twitter:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
+  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <link rel="canonical" href="https://sitereadyshd.fr/minimal/">
   <title>Création de site internet en Ardèche (07) | SiteReady</title>
   <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +46,8 @@
     ul,ol{padding:0;list-style:none}
     a{color:inherit}
     img,svg{display:block;max-width:100%}
-    section[id]{scroll-margin-top:var(--header)}
+    html{scroll-padding-top:calc(var(--header) + 1.25rem)}
+    section[id]{scroll-margin-top:calc(var(--header) + 1.25rem)}
     :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
     .skip-link{position:absolute;left:var(--pad);top:-100px;background:var(--ink);color:#fff;padding:12px 16px;z-index:100;text-decoration:none}
     .skip-link:focus{top:12px}
@@ -151,13 +159,16 @@
     .example-card__trade{padding:16px 18px;font-weight:300;font-size:1.375rem;letter-spacing:-.01em}
 
     /* ---------- FAQ ---------- */
-    .faq{margin-top:clamp(40px,7vw,72px);border-top:1px solid var(--ink)}
+    .faq{margin-top:clamp(40px,7vw,72px);border-top:1px solid var(--ink);min-width:0}
+    #faq .container--narrow{width:min(100% - 1.25rem,720px)}
     .faq-item{border-bottom:1px solid var(--line)}
     .faq-item h3{font-size:inherit;font-weight:inherit}
     .faq-item__trigger{
-      width:100%;display:flex;justify-content:space-between;align-items:center;gap:24px;text-align:left;
-      background:none;border:0;border-radius:0;padding:24px 0;font:inherit;font-weight:400;font-size:1.25rem;line-height:1.35;letter-spacing:-.01em;color:var(--ink);cursor:pointer;
+      width:100%;max-width:100%;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:.75rem 1rem;text-align:left;
+      background:none;border:0;border-radius:0;padding:24px 0;font:inherit;font-weight:400;font-size:clamp(1rem,4.2vw,1.25rem);line-height:1.35;letter-spacing:-.01em;color:var(--ink);cursor:pointer;
     }
+    .faq-item__label{min-width:0;overflow-wrap:break-word;hyphens:auto}
+    .faq-item__icon{margin-top:.2em}
     .faq-item__icon{flex:none;position:relative;width:20px;height:20px}
     .faq-item__icon::before,.faq-item__icon::after{content:"";position:absolute;left:0;top:9px;width:20px;height:1.5px;background:var(--ink);transition:transform .25s}
     .faq-item__icon::after{transform:rotate(90deg)}
@@ -245,6 +256,7 @@
       .js .reveal{opacity:1;transform:none}
     }
   </style>
+<noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body data-page="minimal">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -514,9 +526,7 @@
         <div id="faq-list" class="faq">
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-0" id="faq-trigger-0">
-                En combien de temps avez-vous la maquette ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-0" id="faq-trigger-0"><span class="faq-item__label">En combien de temps avez-vous la maquette ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-0" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-0">
@@ -525,9 +535,7 @@
           </div>
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-1" id="faq-trigger-1">
-                Qui écrit les textes du site ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-1" id="faq-trigger-1"><span class="faq-item__label">Qui écrit les textes du site ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-1" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-1">
@@ -536,9 +544,7 @@
           </div>
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-2" id="faq-trigger-2">
-                Que se passe-t-il si j’arrête l’abonnement à 50 €/mois ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-2" id="faq-trigger-2"><span class="faq-item__label">Que se passe-t-il si j’arrête l’abonnement à 50 €/mois ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-2" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-2">
@@ -547,9 +553,7 @@
           </div>
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-3" id="faq-trigger-3">
-                Y a-t-il des frais après la création ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-3" id="faq-trigger-3"><span class="faq-item__label">Y a-t-il des frais après la création ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-3" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-3">
@@ -558,9 +562,7 @@
           </div>
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-4" id="faq-trigger-4">
-                Puis-je modifier mon site plus tard ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-4" id="faq-trigger-4"><span class="faq-item__label">Puis-je modifier mon site plus tard ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-4" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-4">
@@ -569,9 +571,7 @@
           </div>
           <div class="faq-item reveal">
             <h3>
-              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-5" id="faq-trigger-5">
-                À qui appartient le nom de domaine ?
-                <span class="faq-item__icon" aria-hidden="true"></span>
+              <button type="button" class="faq-item__trigger" aria-expanded="false" aria-controls="faq-panel-5" id="faq-trigger-5"><span class="faq-item__label">À qui appartient le nom de domaine ?</span><span class="faq-item__icon" aria-hidden="true"></span>
               </button>
             </h3>
             <div id="faq-panel-5" class="faq-item__panel" role="region" aria-labelledby="faq-trigger-5">
@@ -701,6 +701,16 @@
     nav.addEventListener('click', function (e) { if (e.target.closest('a')) setNav(false); });
     d.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
 
+    /* FAQ : supprimer d’éventuels doublons hors #faq-list (ancien HTML) */
+    (function () {
+      var list = d.getElementById('faq-list');
+      var section = d.getElementById('faq');
+      if (!list || !section) return;
+      section.querySelectorAll('.faq-item').forEach(function (el) {
+        if (!list.contains(el)) el.remove();
+      });
+    })();
+
     /* FAQ : repliée par défaut (le contenu reste lisible sans JS) */
     d.querySelectorAll('.faq-item__trigger').forEach(function (btn) {
       var panel = d.getElementById(btn.getAttribute('aria-controls'));
@@ -724,6 +734,17 @@
       items.forEach(function (el) { el.classList.add('is-visible'); });
     }
 
+    function scrollAnchorOffset(extra) {
+      extra = extra || 20;
+      var header = d.querySelector('.site-header');
+      return header ? header.getBoundingClientRect().height + extra : 88;
+    }
+    function scrollToElement(el) {
+      if (!el) return;
+      var top = el.getBoundingClientRect().top + window.scrollY - scrollAnchorOffset();
+      window.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
+    }
+
     /* Formulaire : choix à boutons */
     var form = d.getElementById('contact-form');
     function setPill(group, value) {
@@ -742,7 +763,7 @@
     d.querySelectorAll('.price-card__cta').forEach(function (b) {
       b.addEventListener('click', function () {
         setPill('plan', b.getAttribute('data-plan'));
-        d.getElementById('contact').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+        scrollToElement(d.getElementById('contact'));
         history.replaceState(null, '', '#contact');
       });
     });

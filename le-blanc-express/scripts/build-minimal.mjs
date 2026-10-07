@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
+import { injectSeoHead } from "./seo-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -52,6 +53,13 @@ function patchFormCopy(html, C, O) {
   return out;
 }
 
+function injectNoScriptMinimal(html) {
+  const block =
+    '<noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>';
+  if (html.includes("faq-item__panel[hidden]")) return html;
+  return html.replace("</head>", `${block}\n</head>`);
+}
+
 function patchStyleSelector(html, C) {
   const t = C.themeSwitch;
   const controls = `
@@ -76,20 +84,22 @@ function patchStyleSelector(html, C) {
   return out;
 }
 
+function wrapFaqLabels(html) {
+  return html.replace(
+    /(<button type="button" class="faq-item__trigger"[\s\S]*?>)\s*([^<\n][\s\S]*?)\s*(<span class="faq-item__icon")/g,
+    (_, open, label, icon) => `${open}<span class="faq-item__label">${label.trim()}</span>${icon}`
+  );
+}
+
 function patch(html, content, offers) {
   let out = html;
+  out = wrapFaqLabels(out);
   out = out.replace(/<!--[\s\S]*?-->/g, "");
   out = out.replace(/\smethod="post"\saction="\/api\/contact"/i, "");
-  if (!out.includes('rel="canonical"')) {
-    out = out.replace(/<head>/i, '<head>\n  <link rel="canonical" href="https://sitereadyshd.fr/">');
-  } else {
-    out = out.replace(
-      /<link rel="canonical" href="[^"]*">/i,
-      '<link rel="canonical" href="https://sitereadyshd.fr/">'
-    );
-  }
   out = patchStyleSelector(out, content);
   out = patchFormCopy(out, content, offers);
+  out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/minimal/`);
+  out = injectNoScriptMinimal(out);
   out = out.replace(
     /\n\s*\/\* Formulaire : validation et envoi[\s\S]*?\.then\(function \(\) \{ btn\.disabled = false; \}\);\s*\}\);\s*/,
     "\n"

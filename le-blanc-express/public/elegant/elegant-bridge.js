@@ -3,10 +3,15 @@
   const STORAGE_KEY = "siteready-design";
   document.body.dataset.page = "elegant";
 
+  function scrollAnchorOffset(extra = 20) {
+    const header = document.querySelector(".header");
+    return header ? header.getBoundingClientRect().height + extra : 104;
+  }
+
   function scrollToSelector() {
     const el = document.getElementById("style-selector");
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+    const top = el.getBoundingClientRect().top + window.scrollY - scrollAnchorOffset();
     window.scrollTo({ top, behavior: "smooth" });
   }
 
