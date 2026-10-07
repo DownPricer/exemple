@@ -203,21 +203,9 @@ a {
   width: 2rem;
   height: 2rem;
   border-radius: 10px;
-  background: var(--yellow);
-  position: relative;
   flex-shrink: 0;
-}
-
-.brand__mark::after {
-  content: "";
-  position: absolute;
-  left: 0.55rem;
-  top: 0.62rem;
-  width: 0.45rem;
-  height: 0.75rem;
-  border: solid var(--night);
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
+  display: block;
+  object-fit: cover;
 }
 
 .brand__text strong {

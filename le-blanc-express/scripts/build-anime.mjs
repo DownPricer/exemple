@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
+import { injectFaviconHead } from "./favicon-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -110,6 +111,7 @@ function patch(html, content, offers) {
   );
   out = patchStyleSelector(out, content);
   out = patchFormCopy(out, content, offers);
+  out = injectFaviconHead(out);
   out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/anime/`);
   out = injectNoScriptAnime(out);
   out = out.replace(

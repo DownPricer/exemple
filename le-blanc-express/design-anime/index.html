@@ -66,7 +66,7 @@
     .site-header{position:fixed;top:0;left:0;right:0;z-index:80;background:rgba(10,10,11,.94);border-bottom:1px solid var(--line)}
     .header-inner{display:flex;align-items:center;justify-content:space-between;height:var(--header)}
     .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:1.25rem;letter-spacing:-.01em}
-    .brand__mark{width:26px;height:26px;flex:none}
+    .brand__mark{width:26px;height:26px;flex:none;border-radius:8px;object-fit:cover;display:block}
     .brand__text span{font-weight:300}
     .brand__text strong{font-weight:700}
     .nav-toggle{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:12px;background:transparent;display:inline-flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;padding:0}
@@ -361,7 +361,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#top" aria-label="SiteReady — accueil">
-        <svg class="brand__mark" viewBox="0 0 26 26" aria-hidden="true" focusable="false"><rect width="26" height="26" fill="#ff3d81"/><path d="M7 13.5l4 4 8-9" fill="none" stroke="#0a0a0b" stroke-width="2.4" stroke-linecap="square"/></svg>
+        <img class="brand__mark" src="/assets/img/favicon.png" alt="" width="26" height="26" decoding="async">
         <span class="brand__text"><span data-site-name-normal>Site</span><strong data-site-name-bold>Ready</strong></span>
       </a>
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">

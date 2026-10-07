@@ -1,3 +1,5 @@
+import { buildFaviconHeadBlock } from "./favicon-head.mjs";
+
 export function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -26,7 +28,7 @@ export function buildSeoHeadBlock(seo, site, pageUrl) {
   <meta name="twitter:title" content="${escapeHtml(seo.title)}">
   <meta name="twitter:description" content="${escapeHtml(seo.description)}">
   <meta name="twitter:image" content="${escapeHtml(ogImage)}">
-  <link rel="canonical" href="${escapeHtml(url)}">`;
+  <link rel="canonical" href="${escapeHtml(url)}">${buildFaviconHeadBlock()}`;
 }
 
 export function injectSeoHead(html, seo, site, pageUrl) {
@@ -49,6 +51,8 @@ export function injectSeoHead(html, seo, site, pageUrl) {
     /<meta name="twitter:description"[^>]*>\s*/gi,
     /<meta name="twitter:image"[^>]*>\s*/gi,
     /<link rel="canonical"[^>]*>\s*/gi,
+    /<link rel="icon"[^>]*>\s*/gi,
+    /<link rel="apple-touch-icon"[^>]*>\s*/gi,
   ];
   for (const re of strip) out = out.replace(re, "");
 

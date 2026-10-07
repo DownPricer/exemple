@@ -17,6 +17,8 @@
   <meta name="twitter:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
   <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
   <link rel="canonical" href="https://sitereadyshd.fr/minimal/">
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/img/favicon.png">
   <title>Création de site internet en Ardèche (07) | SiteReady</title>
   <meta name="theme-color" content="#ffffff">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,7 +61,7 @@
     .site-header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
     .header-inner{display:flex;align-items:center;justify-content:space-between;height:var(--header)}
     .brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-size:1.1875rem;letter-spacing:-.01em}
-    .brand__mark{width:26px;height:26px;flex:none}
+    .brand__mark{width:26px;height:26px;flex:none;border-radius:8px;object-fit:cover;display:block}
     .brand__text strong{font-weight:600}
     .brand__text span{font-weight:300}
     .nav-toggle{width:44px;height:44px;border:1px solid var(--ink);background:var(--bg);display:inline-flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;padding:0}
@@ -264,7 +266,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#top" aria-label="SiteReady — accueil">
-        <svg class="brand__mark" viewBox="0 0 26 26" aria-hidden="true" focusable="false"><rect width="26" height="26" fill="#0b0b0b"/><path d="M7 13.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="square"/></svg>
+        <img class="brand__mark" src="/assets/img/favicon.png" alt="" width="26" height="26" decoding="async">
         <span class="brand__text"><span data-site-name-normal>Site</span><strong data-site-name-bold>Ready</strong></span>
       </a>
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav" aria-label="Ouvrir le menu">

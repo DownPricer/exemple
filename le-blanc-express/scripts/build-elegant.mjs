@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { loadOffers } from "./load-offers.mjs";
 import { loadContent } from "./load-content.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
+import { FAVICON_PATH, injectFaviconHead } from "./favicon-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -179,6 +180,12 @@ function patch(html, offers, content) {
   }
 
   out = applyOffers(out, offers);
+  out = injectFaviconHead(out);
+  const brandImg = `<img class="brand-mark" src="${FAVICON_PATH}" alt="" width="28" height="28" decoding="async" style="border-radius:8px;object-fit:cover">`;
+  out = out.replace(
+    /<svg class="brand-mark"[\s\S]*?<\/svg>/gi,
+    brandImg
+  );
   if (content) out = applySeo(out, content);
   return out;
 }

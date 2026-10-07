@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
+import { injectFaviconHead } from "./favicon-head.mjs";
 import { replaceInnerById } from "./replace-inner.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -176,6 +177,7 @@ function ensureOffersScript(html) {
 function prerenderDynamiqueIndex(C, O) {
   const indexPath = path.join(publicDir, "index.html");
   let html = fs.readFileSync(indexPath, "utf8");
+  html = injectFaviconHead(html);
   html = injectSeoHead(html, C.seo, C.site, `${C.site.url}/`);
   html = injectNoScriptFallback(html);
 
@@ -346,6 +348,7 @@ function prerenderLegalPage(filename, pageKey, C) {
 </html>
 `;
 
+  html = injectFaviconHead(html);
   html = injectSeoHead(html, seo, C.site, pageUrl);
   fs.writeFileSync(filePath, html, "utf8");
   console.log(`Prérendu : ${filePath}`);
