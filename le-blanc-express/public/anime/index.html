@@ -9,14 +9,14 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sitereadyshd.fr/anime/">
   <meta property="og:locale" content="fr_FR">
-  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Création de site internet en Ardèche (07) | SiteReady">
   <meta name="twitter:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
-  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
-  <link rel="canonical" href="https://sitereadyshd.fr/anime/">
+  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-image.png">
+  <link rel="canonical" href="https://sitereadyshd.fr/">
   <link rel="icon" type="image/png" href="/assets/img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/assets/img/favicon.png">
   <title>Création de site internet en Ardèche (07) | SiteReady</title>
@@ -464,7 +464,7 @@
           <li class="step-card reveal">
             <span class="step-card__num">1</span>
             <h3>On échange</h3>
-            <p>Par message ou par téléphone. Vous m’expliquez votre activité et votre ville.</p>
+            <p>Par message. Vous m’expliquez votre activité et votre ville.</p>
           </li>
           <li class="step-card reveal">
             <span class="step-card__num">2</span>
@@ -505,8 +505,7 @@
         <div id="pricing-grid" class="pricing-grid">
           <article class="price-card reveal">
             <h3>En une fois</h3>
-            <p class="price-card__note">à partir de</p>
-            <p class="price-card__price"><span class="count" data-count="500">500</span> €</p>
+            <p class="price-card__price">à partir de 500 €</p>
             <p class="price-card__hosting">+ hébergement 5 €/mois</p>
             <ul class="price-card__bullets">
               <li>Site vitrine pour présenter votre activité</li><li>Pensé pour le téléphone</li><li>Maquette gratuite avant engagement</li><li>Nom de domaine personnalisé</li><li>Hébergement et mise en ligne : 5 €/mois</li>
@@ -599,7 +598,7 @@
                 <circle cx="300" cy="149" r="34" fill="#ff3d81" opacity=".9"/>
                 <rect x="24" y="258" width="352" height="2" fill="#f4f2ec" opacity=".35"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Plombier</figcaption>
           </figure>
@@ -614,7 +613,7 @@
                 <rect x="290" y="190" width="86" height="32" rx="9" fill="#ff3d81"/>
                 <rect x="24" y="268" width="352" height="2" fill="#f4f2ec" opacity=".35"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Coiffeur</figcaption>
           </figure>
@@ -631,7 +630,7 @@
                 <rect x="24" y="234" width="300" height="3" fill="#f4f2ec" opacity=".35"/>
                 <rect x="24" y="268" width="352" height="2" fill="#f4f2ec" opacity=".35"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Restaurant</figcaption>
           </figure>
@@ -765,13 +764,13 @@
             </div>
             <div class="field field--float">
               <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder=" " aria-describedby="err-phone">
-              <label for="phone">Téléphone</label>
+              <label for="phone"></label>
               <span class="field__line" aria-hidden="true"></span>
               <svg class="field__ok" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg>
               <p class="field-error" id="err-phone" data-error-for="phone" role="alert"></p>
             </div>
             <div class="field field--float field--full">
-              <input id="email" name="email" type="email" autocomplete="email" placeholder=" " aria-describedby="err-email">
+              <input id="email" name="email" type="email" autocomplete="email" placeholder=" " aria-describedby="err-email" required aria-required="true">
               <label for="email">E-mail</label>
               <span class="field__line" aria-hidden="true"></span>
               <svg class="field__ok" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg>
@@ -798,7 +797,7 @@
             
             <legend data-label-plan>Formule envisagée</legend>
             <div class="pill-group">
-              <input class="pill-input" type="radio" name="plan" id="plan-once" value="once" checked><label class="pill-choice" for="plan-once">En une fois (500 € + 5 €/mois d'hébergement)</label>
+              <input class="pill-input" type="radio" name="plan" id="plan-once" value="once" checked><label class="pill-choice" for="plan-once">En une fois (à partir de 500 € + hébergement 5 €/mois)</label>
               <input class="pill-input" type="radio" name="plan" id="plan-monthly" value="monthly"><label class="pill-choice" for="plan-monthly">Par mois</label>
               <input class="pill-input" type="radio" name="plan" id="plan-sur-mesure" value="sur-mesure"><label class="pill-choice" for="plan-sur-mesure">Sur mesure</label>
             </div>
@@ -817,7 +816,7 @@
             <label id="consent-label">
               <input type="checkbox" name="consent" value="true" required aria-describedby="err-consent">
               
-              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a>.</span>
+              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a> et aux <a href="/conditions-de-vente.html">conditions de vente</a>.</span>
             </label>
             <p class="field-error" id="err-consent" data-error-for="consent" role="alert"></p>
           </div>
@@ -836,6 +835,7 @@
     <div class="container footer-inner">
       <nav aria-label="Liens légaux">
         <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/conditions-de-vente.html">Conditions de vente</a>
         <a href="/politique-confidentialite.html">Politique de confidentialité</a>
         
       </nav>

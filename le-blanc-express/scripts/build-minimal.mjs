@@ -39,7 +39,7 @@ function patchFormCopy(html, C, O) {
     /<span data-has-website-yes>[^<]*<\/span>/,
     `<span data-has-website-yes>${escapeHtml(f.hasWebsiteYes)}</span>`
   );
-  const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
+  const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>${escapeHtml(f.consentAndTerms || " et aux ")}<a href="/conditions-de-vente.html">${escapeHtml(f.consentTermsLink || "conditions de vente")}</a>.`;
   out = out.replace(/<span data-label-consent>[\s\S]*?<\/span>/, `<span data-label-consent>${consentHtml}</span>`);
   out = out.replace(
     /<button type="submit" class="btn contact-form__submit" data-submit-label>[^<]*<\/button>/,
@@ -92,15 +92,50 @@ function wrapFaqLabels(html) {
   );
 }
 
-function patch(html, content, offers) {
+function patchLayout(html) {
   let out = html;
+  out = out.replace(
+    /<div class="field">\s*<label for="phone">[\s\S]*?<p class="field-error" data-error-for="phone"[^>]*><\/p>\s*<\/div>\s*/i,
+    ""
+  );
+  out = out.replace(
+    /(<input id="email" name="email"[^>]*)(>)/i,
+    '$1 required aria-required="true"$2'
+  );
+  out = out.replace(
+    /Par message ou par téléphone\./g,
+    "Par message."
+  );
+  out = out.replace(
+    /<p class="price-card__price">500 €<\/p>/g,
+    '<p class="price-card__price">à partir de 500 €</p>'
+  );
+  out = out.replace(
+    /<p class="price-card__note">à partir de<\/p>\s*/g,
+    ""
+  );
+  out = out.replace(
+    /<span class="example-card__label">Exemple de maquette<\/span>/g,
+    '<span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>'
+  );
+  return out;
+}
+
+function patch(html, content, offers) {
+  let out = patchLayout(html);
   out = wrapFaqLabels(out);
   out = out.replace(/<!--[\s\S]*?-->/g, "");
   out = out.replace(/\smethod="post"\saction="\/api\/contact"/i, "");
   out = patchStyleSelector(out, content);
   out = patchFormCopy(out, content, offers);
   out = injectFaviconHead(out);
-  out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/minimal/`);
+  out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/minimal/`, {
+    canonicalUrl: `${content.site.url}/`,
+  });
+  out = out.replace(
+    /<a href="\/politique-confidentialite\.html">Politique de confidentialité<\/a>/,
+    '<a href="/mentions-legales.html">Mentions légales</a>\n        <a href="/politique-confidentialite.html">Politique de confidentialité</a>\n        <a href="/conditions-de-vente.html">Conditions de vente</a>'
+  );
   out = injectNoScriptMinimal(out);
   out = out.replace(
     /\n\s*\/\* Formulaire : validation et envoi[\s\S]*?\.then\(function \(\) \{ btn\.disabled = false; \}\);\s*\}\);\s*/,

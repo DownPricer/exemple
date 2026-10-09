@@ -9,14 +9,14 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sitereadyshd.fr/minimal/">
   <meta property="og:locale" content="fr_FR">
-  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
+  <meta property="og:image" content="https://sitereadyshd.fr/assets/img/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Création de site internet en Ardèche (07) | SiteReady">
   <meta name="twitter:description" content="SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.">
-  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-share.png">
-  <link rel="canonical" href="https://sitereadyshd.fr/minimal/">
+  <meta name="twitter:image" content="https://sitereadyshd.fr/assets/img/og-image.png">
+  <link rel="canonical" href="https://sitereadyshd.fr/">
   <link rel="icon" type="image/png" href="/assets/img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/assets/img/favicon.png">
   <title>Création de site internet en Ardèche (07) | SiteReady</title>
@@ -350,7 +350,7 @@
           <li class="step-card reveal">
             <span class="step-card__num">1</span>
             <h3>On échange</h3>
-            <p>Par message ou par téléphone. Vous m’expliquez votre activité et votre ville.</p>
+            <p>Par message. Vous m’expliquez votre activité et votre ville.</p>
           </li>
           <li class="step-card reveal">
             <span class="step-card__num">2</span>
@@ -389,8 +389,7 @@
         <div id="pricing-grid" class="pricing-grid">
           <article class="price-card reveal">
             <h3>En une fois</h3>
-            <p class="price-card__note">à partir de</p>
-            <p class="price-card__price">500 €</p>
+            <p class="price-card__price">à partir de 500 €</p>
             <p class="price-card__hosting">+ hébergement 5 €/mois</p>
             <ul class="price-card__bullets">
               <li>Site vitrine pour présenter votre activité</li><li>Pensé pour le téléphone</li><li>Maquette gratuite avant engagement</li><li>Nom de domaine personnalisé</li><li>Hébergement et mise en ligne : 5 €/mois</li>
@@ -474,7 +473,7 @@
                 <line x1="224" y1="64" x2="376" y2="234" stroke="#bdbdbd"/><line x1="376" y1="64" x2="224" y2="234" stroke="#bdbdbd"/>
                 <rect x="24" y="258" width="352" height="1.5" fill="#0b0b0b"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Plombier</figcaption>
           </figure>
@@ -489,7 +488,7 @@
                 <rect x="290" y="184" width="86" height="30" fill="#c8321a"/>
                 <rect x="24" y="266" width="352" height="1.5" fill="#0b0b0b"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Coiffeur</figcaption>
           </figure>
@@ -506,7 +505,7 @@
                 <rect x="24" y="232" width="300" height="1.5" fill="#bdbdbd"/>
                 <rect x="24" y="266" width="352" height="1.5" fill="#0b0b0b"/>
               </svg>
-              <span class="example-card__label">Exemple de maquette</span>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
             </div>
             <figcaption class="example-card__trade">Restaurant</figcaption>
           </figure>
@@ -615,14 +614,9 @@
               <label for="city">Ville</label>
               <input id="city" name="city" type="text" autocomplete="address-level2">
             </div>
-            <div class="field">
-              <label for="phone">Téléphone</label>
-              <input id="phone" name="phone" type="tel" autocomplete="tel">
-              <p class="field-error" data-error-for="phone" role="alert"></p>
-            </div>
             <div class="field field--full">
               <label for="email">E-mail</label>
-              <input id="email" name="email" type="email" autocomplete="email">
+              <input id="email" name="email" type="email" autocomplete="email" required aria-required="true">
               <p class="field-error" data-error-for="email" role="alert"></p>
             </div>
           </div>
@@ -645,7 +639,7 @@
             
             <span class="field__legend" id="plan-label" data-label-plan>Formule envisagée</span>
             <div class="pill-group" role="group" aria-labelledby="plan-label">
-              <button type="button" class="pill-choice is-selected" data-pill-group="plan" data-value="once" aria-pressed="true">En une fois (500 € + 5 €/mois d'hébergement)</button>
+              <button type="button" class="pill-choice is-selected" data-pill-group="plan" data-value="once" aria-pressed="true">En une fois (à partir de 500 € + hébergement 5 €/mois)</button>
               <button type="button" class="pill-choice" data-pill-group="plan" data-value="monthly" aria-pressed="false">Par mois</button>
               <button type="button" class="pill-choice" data-pill-group="plan" data-value="sur-mesure" aria-pressed="false">Sur mesure</button>
             </div>
@@ -664,7 +658,7 @@
             <label id="consent-label">
               <input type="checkbox" name="consent" value="true">
               
-              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a>.</span>
+              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a> et aux <a href="/conditions-de-vente.html">conditions de vente</a>.</span>
             </label>
             <p class="field-error" data-error-for="consent" role="alert"></p>
           </div>
@@ -680,8 +674,10 @@
     <div class="container footer-inner">
       <nav aria-label="Liens légaux">
         <a href="/mentions-legales.html">Mentions légales</a>
+        <a href="/mentions-legales.html">Mentions légales</a>
         <a href="/politique-confidentialite.html">Politique de confidentialité</a>
-        
+        <a href="/conditions-de-vente.html">Conditions de vente</a>
+        <a href="/conditions-de-vente.html">Conditions de vente</a>
       </nav>
       <p data-footer-tagline>SiteReady — Ardèche</p>
     </div>

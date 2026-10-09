@@ -6,6 +6,10 @@ import { loadOffers } from "./load-offers.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
 import { replaceInnerById } from "./replace-inner.mjs";
+import { LEGAL_PAGES } from "./legal-static.mjs";
+import { wrapStaticPage } from "./build-page-shell.mjs";
+import { LOCAL_PAGES } from "./local-pages-data.mjs";
+import { LOCAL_CITY_SLUGS, LOCAL_TRADE_SLUGS, SITE_URL } from "./site-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -51,7 +55,7 @@ function buildPricingHtml(C, O) {
       return `
         <article class="price-card reveal${card.id === "monthly" ? " price-card--highlight" : ""}">
           <h3>${escapeHtml(card.name)}</h3>
-          <p class="price-card__note">${escapeHtml(card.priceNote)}</p>
+          ${card.priceNote ? `<p class="price-card__note">${escapeHtml(card.priceNote)}</p>` : ""}
           <p class="price-card__price">${escapeHtml(card.price)}</p>
           ${hosting ? `<p class="price-card__hosting">${escapeHtml(hosting)}</p>` : ""}
           <ul class="price-card__bullets">
@@ -64,24 +68,34 @@ function buildPricingHtml(C, O) {
     .join("");
 }
 
-function buildSchema(C) {
-  const { seo, site } = C;
-  return JSON.stringify({
+function buildSchema(C, O) {
+  const { seo, site, faq } = C;
+  const cities = seo.schemaCities || [];
+  const areaServed = [
+    { "@type": "AdministrativeArea", name: seo.areaServed },
+    ...cities.map((name) => ({ "@type": "City", name })),
+  ];
+  const service = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: seo.serviceName,
     description: seo.serviceDescription,
     url: site.url,
     email: seo.email,
-    areaServed: { "@type": "AdministrativeArea", name: seo.areaServed },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: seo.streetAddress,
-      addressLocality: seo.addressLocality,
-      addressRegion: seo.addressRegion,
-      addressCountry: "FR",
-    },
-  });
+    areaServed,
+    priceRange: seo.priceRange || "€€",
+  };
+  const faqItems = buildFaqItems(C, O);
+  const faqPage = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+  return JSON.stringify([service, faqPage]);
 }
 
 function replaceEmptyDataEl(html, attr, inner) {
@@ -254,6 +268,7 @@ function prerenderDynamiqueIndex(C, O) {
     .map(
       (item) => `
         <figure class="example-card reveal">
+          <span class="example-card__fictif">Exemple fictif</span>
           <span class="example-card__label">${escapeHtml(item.label)}</span>
           <figcaption class="example-card__trade">${escapeHtml(item.trade)}</figcaption>
           <p class="example-card__mock-title">${escapeHtml(item.mockTitle)}</p>
@@ -283,7 +298,9 @@ function prerenderDynamiqueIndex(C, O) {
   html = injectContactFormCopy(html, C, O);
   html = ensureOffersScript(html);
 
-  const schema = buildSchema(C);
+  html = injectFooterZones(html);
+
+  const schema = buildSchema(C, O);
   html = html.replace(
     /<script type="application\/ld\+json" id="json-ld">[\s\S]*?<\/script>/i,
     `<script type="application/ld+json" id="json-ld">${schema}</script>`
@@ -293,69 +310,69 @@ function prerenderDynamiqueIndex(C, O) {
   console.log(`Prérendu : ${indexPath}`);
 }
 
-function prerenderLegalPage(filename, pageKey, C) {
-  const filePath = path.join(publicDir, filename);
-  const isMentions = pageKey === "mentions";
-  const block = isMentions ? C.legal.mentions : C.legal.privacy;
-  const title = `${block.title} | SiteReady`;
-  const description = isMentions
-    ? `Mentions légales du site SiteReady (sitereadyshd.fr).`
-    : `Politique de confidentialité et traitement des données du formulaire de contact SiteReady.`;
-  const pageUrl = `${C.site.url}/${filename}`;
-  const seo = {
-    ...C.seo,
-    title,
-    description,
-  };
+function labelForSlug(slug) {
+  const page = LOCAL_PAGES.find((p) => p.slug === slug);
+  if (page?.placeLabel) return page.placeLabel;
+  return slug.replace("site-internet-", "").replace(/-ardeche$/, "").replace(/-/g, " ");
+}
 
-  let mainHtml;
-  if (isMentions) {
-    mainHtml = `
-      <h1>${escapeHtml(block.title)}</h1>
-      <h2>${escapeHtml(block.editorTitle)}</h2>
-      ${block.editorLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("\n      ")}
-      <h2>${escapeHtml(block.hostTitle)}</h2>
-      ${block.hostLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("\n      ")}
-      <p><a href="/">${escapeHtml(block.back)}</a></p>`;
-  } else {
-    mainHtml = `
-      <h1>${escapeHtml(block.title)}</h1>
-      <p>${escapeHtml(block.intro)}</p>
-      ${block.sections
-        .map((s) => `<h2>${escapeHtml(s.title)}</h2><p>${escapeHtml(s.text)}</p>`)
-        .join("\n      ")}
-      <p><a href="/">${escapeHtml(block.back)}</a></p>`;
+function buildFooterZonesHtml() {
+  const cityLinks = LOCAL_CITY_SLUGS.map((slug) => {
+    return `<li><a href="/${slug}">${escapeHtml(labelForSlug(slug))}</a></li>`;
+  }).join("\n            ");
+  const tradeLinks = LOCAL_TRADE_SLUGS.map((slug) => {
+    return `<li><a href="/${slug}">${escapeHtml(labelForSlug(slug))}</a></li>`;
+  }).join("\n            ");
+  return `
+      <section id="footer-zones" class="footer-zones" aria-labelledby="footer-zones-title">
+        <div class="container">
+        <h2 id="footer-zones-title" class="footer-zones__title">Zones et métiers</h2>
+        <div class="footer-zones__grid">
+          <div>
+            <h3 class="footer-zones__subtitle">Villes</h3>
+            <ul class="footer-zones__list">${cityLinks}
+            </ul>
+          </div>
+          <div>
+            <h3 class="footer-zones__subtitle">Métiers</h3>
+            <ul class="footer-zones__list">${tradeLinks}
+            </ul>
+          </div>
+        </div>
+        </div>
+      </section>`;
+}
+
+function injectFooterZones(html) {
+  if (html.includes('id="footer-zones"')) {
+    return html.replace(
+      /<section[^>]*id="footer-zones"[^>]*>[\s\S]*?<\/section>/i,
+      buildFooterZonesHtml().trim()
+    );
   }
+  return html.replace(
+    /<footer class="site-footer">/i,
+    `${buildFooterZonesHtml()}\n  <footer class="site-footer">`
+  );
+}
 
-  let html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex">
-  <title>${escapeHtml(title)}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body data-legal-page="${pageKey}" class="legal-page">
-  <main class="container container--narrow" id="legal-content">${mainHtml}
-  </main>
-  <script src="/assets/js/content.js"></script>
-  <script src="/assets/js/legal.js"></script>
-</body>
-</html>
-`;
-
-  html = injectFaviconHead(html);
-  html = injectSeoHead(html, seo, C.site, pageUrl);
-  fs.writeFileSync(filePath, html, "utf8");
-  console.log(`Prérendu : ${filePath}`);
+function prerenderLegalPages(C) {
+  for (const [filename, meta] of Object.entries(LEGAL_PAGES)) {
+    const filePath = path.join(publicDir, filename);
+    const pageUrl = `${SITE_URL}/${filename}`;
+    const html = wrapStaticPage({
+      title: meta.title,
+      description: meta.description,
+      canonicalUrl: pageUrl,
+      bodyHtml: meta.body(),
+      ogImage: C.seo.ogImage,
+    });
+    fs.writeFileSync(filePath, html, "utf8");
+    console.log(`Prérendu : ${filePath}`);
+  }
 }
 
 const C = loadContent(root);
 const O = loadOffers(root);
 prerenderDynamiqueIndex(C, O);
-prerenderLegalPage("mentions-legales.html", "mentions", C);
-prerenderLegalPage("politique-confidentialite.html", "privacy", C);
+prerenderLegalPages(C);

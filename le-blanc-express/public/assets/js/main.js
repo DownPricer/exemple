@@ -55,31 +55,36 @@
       setMeta("twitter:image", seo.ogImage);
     }
 
-    const schema = {
+    const cities = seo.schemaCities || [];
+    const areaServed = [
+      { "@type": "AdministrativeArea", name: seo.areaServed },
+      ...cities.map((name) => ({ "@type": "City", name })),
+    ];
+    const service = {
       "@context": "https://schema.org",
       "@type": "ProfessionalService",
       name: seo.serviceName,
       description: seo.serviceDescription,
       url: site.url,
       email: seo.email,
-      areaServed: { "@type": "AdministrativeArea", name: seo.areaServed },
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: seo.streetAddress,
-        addressLocality: seo.addressLocality,
-        addressRegion: seo.addressRegion,
-        addressCountry: "FR",
-      },
+      areaServed,
+      priceRange: seo.priceRange || "€€",
     };
-    if (seo.telephone && !String(seo.telephone).includes("[")) {
-      schema.telephone = seo.telephone;
-    }
-    if (seo.postalCode && !String(seo.postalCode).includes("[")) {
-      schema.address.postalCode = seo.postalCode;
-    }
+    const faqItems = [...(C.faq?.items || [])];
+    if (O.faqHosting?.q) faqItems.splice(3, 0, O.faqHosting);
+    if (O.faqDomain?.q) faqItems.push(O.faqDomain);
+    const faqPage = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: { "@type": "Answer", text: item.a },
+      })),
+    };
 
     const script = document.getElementById("json-ld");
-    if (script) script.textContent = JSON.stringify(schema);
+    if (script) script.textContent = JSON.stringify([service, faqPage]);
   }
 
   function fillText(selector, text) {
@@ -351,6 +356,7 @@
         .map(
           (item) => `
         <figure class="example-card reveal">
+          <span class="example-card__fictif">Exemple fictif</span>
           <span class="example-card__label">${escapeHtml(item.label)}</span>
           <figcaption class="example-card__trade">${escapeHtml(item.trade)}</figcaption>
           ${buildPhoneMock(exampleMockInner(item))}
@@ -475,12 +481,11 @@
     const errors = {};
     const name = String(data.get("name") || "").trim();
     const activity = String(data.get("activity") || "").trim();
-    const phone = String(data.get("phone") || "").trim();
     const email = String(data.get("email") || "").trim();
     if (!name) errors.name = "Indiquez votre nom.";
     if (!activity) errors.activity = "Indiquez votre activité.";
-    if (!phone && !email) errors.contact = "Indiquez un téléphone ou un e-mail.";
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email) errors.email = "Indiquez votre adresse e-mail.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = "Cette adresse e-mail ne semble pas valide.";
     }
     if (data.get("hasWebsite") === "yes" && !String(data.get("websiteUrl") || "").trim()) {
@@ -489,7 +494,7 @@
     if (!form.querySelector('[name="consent"]')?.checked) {
       errors.consent = "Cochez la case pour accepter d’être recontacté.";
     }
-    ["name", "activity", "phone", "email", "websiteUrl", "contact", "consent"].forEach(
+    ["name", "activity", "email", "websiteUrl", "consent"].forEach(
       (field) => showFieldError(form, field, errors[field])
     );
     return { ok: Object.keys(errors).length === 0, data, errors };
@@ -611,7 +616,7 @@
     });
     initPillGroups(form);
     const consentText = form.querySelector("[data-label-consent]");
-    const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
+    const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>${escapeHtml(f.consentAndTerms || " et aux ")}<a href="/conditions-de-vente.html">${escapeHtml(f.consentTermsLink || "conditions de vente")}</a>.`;
     if (consentText) {
       consentText.innerHTML = consentHtml;
     } else {

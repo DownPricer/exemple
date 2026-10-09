@@ -88,9 +88,8 @@
     const errors = {};
     if (!String(data.get("name") || "").trim()) errors.name = "Indiquez votre nom.";
     if (!String(data.get("activity") || "").trim()) errors.activity = "Indiquez votre activité.";
-    const phone = String(data.get("phone") || "").trim();
     const email = String(data.get("email") || "").trim();
-    if (!phone && !email) errors.contact = "Indiquez un téléphone ou un e-mail.";
+    if (!email) errors.email = "Indiquez votre adresse e-mail.";
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = "Cette adresse e-mail ne semble pas valide.";
     }
@@ -102,7 +101,7 @@
       errors.consent = "Cochez la case pour accepter d’être recontacté.";
     }
     Object.keys(errors).forEach((k) => showError(k, errors[k]));
-    ["name", "activity", "phone", "email", "websiteUrl", "contact", "consent"].forEach((k) => {
+    ["name", "activity", "email", "websiteUrl", "consent"].forEach((k) => {
       if (!errors[k]) showError(k, "");
     });
     return { ok: Object.keys(errors).length === 0, data };

@@ -130,7 +130,7 @@ function applyOffers(html, offers) {
 
 function applySeo(html, content) {
   const { seo, site } = content;
-  return injectSeoHead(html, seo, site, `${site.url}/elegant/`);
+  return injectSeoHead(html, seo, site, `${site.url}/elegant/`, { canonicalUrl: `${site.url}/` });
 }
 
 function patch(html, offers, content) {
@@ -162,7 +162,26 @@ function patch(html, offers, content) {
     /href=["']politique-confidentialite\.html["']/gi,
     'href="/politique-confidentialite.html"'
   );
+  out = out.replace(
+    /<a href="\/mentions-legales\.html">Mentions légales<\/a><a href="\/politique-confidentialite\.html">/,
+    '<a href="/mentions-legales.html">Mentions légales</a><a href="/conditions-de-vente.html">Conditions de vente</a><a href="/politique-confidentialite.html">'
+  );
+  out = out.replace(
+    /<p class="price">500 €<\/p>\s*<p class="price-sub">à partir de<\/p>/g,
+    '<p class="price">à partir de 500 €</p><p class="price-sub">&nbsp;</p>'
+  );
   out = out.replace(/href=["']Confidentialité["']/gi, 'href="/politique-confidentialite.html"');
+
+  out = out.replace(
+    /<div class="field"><label for="phone">[\s\S]*?<p class="field-error" id="error-phone"[\s\S]*?<\/div>\s*/i,
+    ""
+  );
+  out = out.replace(/(<input id="email"[^>]*)(>)/i, '$1 required aria-required="true"$2');
+  out = out.replace(
+    /(<label class="checkbox-label"[^>]*>[\s\S]*?<span>)(J’accepte[\s\S]*?politique de confidentialité)(<\/a>\.<\/span>)/i,
+    (_, a, mid, end) =>
+      `${a}${mid}</a> et aux <a href="/conditions-de-vente.html">conditions de vente</a>${end}`
+  );
 
   const hiddenStyle = '<input type="hidden" name="preferredStyle" id="preferredStyle" value="Élégant">';
   if (!out.includes('name="preferredStyle"')) {

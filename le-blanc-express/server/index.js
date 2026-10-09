@@ -1,8 +1,12 @@
 import "dotenv/config";
+import compression from "compression";
 import express from "express";
 import rateLimit from "express-rate-limit";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildRobotsTxt, buildSitemapXml } from "../scripts/sitemap-xml.mjs";
+import { LOCAL_CITY_SLUGS, LOCAL_TRADE_SLUGS } from "../scripts/site-config.mjs";
 import { logMissingEnvOnStartup } from "./env.js";
 import {
   buildAdminNotification,
@@ -22,6 +26,7 @@ logMissingEnvOnStartup();
 
 const app = express();
 app.set("trust proxy", 1);
+app.use(compression());
 app.use(express.json({ limit: "32kb" }));
 
 const limiter = rateLimit({
@@ -67,13 +72,11 @@ function validateContact(body) {
     errors.activity = "Indiquez votre activité (ex. plombier, boulangerie).";
   }
 
-  const phone = isNonEmptyString(body.phone) ? body.phone.trim() : "";
   const email = isNonEmptyString(body.email) ? body.email.trim() : "";
 
-  if (!phone && !email) {
-    errors.contact = "Indiquez un numéro de téléphone ou une adresse e-mail.";
-  }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email) {
+    errors.email = "Indiquez votre adresse e-mail.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.email = "Cette adresse e-mail ne semble pas valide.";
   }
 
@@ -170,7 +173,32 @@ app.post("/api/contact", limiter, async (req, res) => {
   return res.json({ ok: true });
 });
 
-app.use(express.static(publicDir));
+app.get("/sitemap.xml", (_req, res) => {
+  res.type("application/xml").send(buildSitemapXml());
+});
+
+app.get("/robots.txt", (_req, res) => {
+  res.type("text/plain").send(buildRobotsTxt());
+});
+
+const localSlugs = [...LOCAL_CITY_SLUGS, ...LOCAL_TRADE_SLUGS];
+for (const slug of localSlugs) {
+  app.get(`/${slug}`, (req, res, next) => {
+    const file = path.join(publicDir, slug, "index.html");
+    if (!fs.existsSync(file)) return next();
+    res.sendFile(file, (err) => (err ? next(err) : undefined));
+  });
+}
+
+app.use(
+  "/assets",
+  express.static(path.join(publicDir, "assets"), {
+    maxAge: "365d",
+    immutable: true,
+  })
+);
+
+app.use(express.static(publicDir, { maxAge: "1h" }));
 
 app.get(["/elegant", "/elegant/*"], (req, res, next) => {
   if (path.extname(req.path)) {

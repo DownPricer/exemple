@@ -1318,6 +1318,93 @@ a.theme-switch__btn {
   font-weight: 700;
 }
 
+.legal-provisional-banner {
+  background: #fff3cd;
+  border: 1px solid #e6c200;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #3d3500;
+}
+
+.footer-zones {
+  padding: 2.5rem 0 1rem;
+  background: var(--cream);
+  border-top: 1px solid rgba(16, 36, 58, 0.08);
+}
+
+.footer-zones__title {
+  font-family: var(--font-tight);
+  font-weight: 800;
+  font-size: 1.125rem;
+  margin: 0 0 1rem;
+}
+
+.footer-zones__subtitle {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.5rem;
+  color: var(--muted-on-light);
+}
+
+.footer-zones__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.footer-zones__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
+.footer-zones__list a {
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.example-card__fictif {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--yellow);
+  color: var(--night);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.35rem;
+}
+
+.local-links {
+  columns: 2;
+  gap: 0.5rem 1.5rem;
+  margin: 0 0 1.5rem;
+  padding-left: 1.1rem;
+}
+
+.local-faq .faq-item {
+  margin-bottom: 1.25rem;
+}
+
+.local-faq .faq-item h3 {
+  font-size: 1rem;
+  margin: 0 0 0.35rem;
+}
+
+@media (min-width: 768px) {
+  .footer-zones__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (min-width: 768px) {
   .nav-toggle {
     display: none;

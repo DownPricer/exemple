@@ -9,9 +9,10 @@ export function escapeHtml(value) {
 }
 
 /** Balises title, description, Open Graph et Twitter à partir de SITE_CONTENT.seo */
-export function buildSeoHeadBlock(seo, site, pageUrl) {
+export function buildSeoHeadBlock(seo, site, pageUrl, options = {}) {
   const url = pageUrl || `${site.url}/`;
-  const ogImage = seo.ogImage || `${site.url}/assets/img/og-share.png`;
+  const canonical = options.canonicalUrl || url;
+  const ogImage = seo.ogImage || `${site.url}/assets/img/og-image.png`;
   const ogW = seo.ogImageWidth || 1200;
   const ogH = seo.ogImageHeight || 630;
   return `
@@ -28,11 +29,11 @@ export function buildSeoHeadBlock(seo, site, pageUrl) {
   <meta name="twitter:title" content="${escapeHtml(seo.title)}">
   <meta name="twitter:description" content="${escapeHtml(seo.description)}">
   <meta name="twitter:image" content="${escapeHtml(ogImage)}">
-  <link rel="canonical" href="${escapeHtml(url)}">${buildFaviconHeadBlock()}`;
+  <link rel="canonical" href="${escapeHtml(canonical)}">${buildFaviconHeadBlock()}`;
 }
 
-export function injectSeoHead(html, seo, site, pageUrl) {
-  const block = buildSeoHeadBlock(seo, site, pageUrl);
+export function injectSeoHead(html, seo, site, pageUrl, options = {}) {
+  const block = buildSeoHeadBlock(seo, site, pageUrl, options);
   let out = html;
   out = out.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
 

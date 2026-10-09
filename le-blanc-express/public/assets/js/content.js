@@ -13,7 +13,18 @@ window.SITE_CONTENT = {
     description:
       "SiteReady crée des sites vitrines pour artisans et commerçants en Ardèche. Maquette gratuite, devis clair, formules avec ou sans hébergement inclus. Demandez votre maquette.",
     ogLocale: "fr_FR",
-    ogImage: "https://sitereadyshd.fr/assets/img/og-share.png",
+    ogImage: "https://sitereadyshd.fr/assets/img/og-image.png",
+    priceRange: "€€",
+    schemaCities: [
+      "Aubenas",
+      "Annonay",
+      "Privas",
+      "Ruoms",
+      "Vals-les-Bains",
+      "Tournon-sur-Rhône",
+      "Le Teil",
+      "Largentière",
+    ],
     ogImageWidth: 1200,
     ogImageHeight: 630,
     serviceName: "SiteReady",
@@ -75,7 +86,7 @@ window.SITE_CONTENT = {
     items: [
       {
         title: "On échange",
-        text: "Par message ou par téléphone. Vous m’expliquez votre activité et votre ville.",
+        text: "Par message. Vous m’expliquez votre activité et votre ville.",
       },
       {
         title: "Maquette et devis gratuits",
@@ -95,8 +106,8 @@ window.SITE_CONTENT = {
       {
         id: "once",
         name: "En une fois",
-        price: "500 €",
-        priceNote: "à partir de",
+        price: "à partir de 500 €",
+        priceNote: "",
         hostingLine: "+ hébergement 5 €/mois",
         bullets: [
           "Site vitrine pour présenter votre activité",
@@ -109,7 +120,7 @@ window.SITE_CONTENT = {
         name: "Par mois",
         price: "50 €/mois",
         priceNote: "sans engagement",
-        hostingLine: "Hébergement inclus",
+        hostingLine: "Hébergement et nom de domaine inclus",
         bullets: [
           "Deux petites modifications par mois incluses",
           "Même qualité qu’en paiement unique",
@@ -206,7 +217,6 @@ window.SITE_CONTENT = {
       company: "Nom de l’entreprise",
       activity: "Votre activité",
       city: "Ville",
-      phone: "Téléphone",
       email: "E-mail",
       hasWebsite: "Avez-vous déjà un site ?",
       hasWebsiteYes: "Oui",
@@ -221,6 +231,8 @@ window.SITE_CONTENT = {
       message: "Votre message (facultatif)",
       consentBefore: "J’accepte que mes informations soient utilisées pour me recontacter, conformément à la ",
       consentLink: "politique de confidentialité",
+      consentAndTerms: " et aux ",
+      consentTermsLink: "conditions de vente",
       preferredStyle: "Style préféré",
       submit: "Envoyer ma demande",
       sending: "Envoi en cours…",
