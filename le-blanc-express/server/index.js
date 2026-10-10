@@ -25,7 +25,10 @@ const port = Number(process.env.PORT) || 3001;
 logMissingEnvOnStartup();
 
 const app = express();
-app.set("trust proxy", 1);
+// Chaîne : visiteur → downpricer-nginx → client1-static → client1-app (2 proxies).
+// Si Cloudflare proxy orange est devant, passer à 3.
+app.set("trust proxy", 2);
+app.disable("x-powered-by");
 app.use(compression());
 app.use(express.json({ limit: "32kb" }));
 
@@ -101,6 +104,35 @@ function unavailableMessage(publicEmail) {
   }
   return "L’envoi est momentanément indisponible. Réessayez plus tard ou contactez-nous par un autre canal.";
 }
+
+/** Chemins dont un segment commence par « . », sauf /.well-known/ */
+function isHiddenDotPath(urlPath) {
+  const parts = String(urlPath || "")
+    .split("/")
+    .filter(Boolean);
+  if (parts[0] === ".well-known") return false;
+  return parts.some((part) => part.startsWith("."));
+}
+
+function sendNotFound(res) {
+  const file = path.join(publicDir, "404.html");
+  if (fs.existsSync(file)) {
+    return res.status(404).sendFile(file);
+  }
+  return res
+    .status(404)
+    .type("html")
+    .send(
+      "<!DOCTYPE html><html lang=\"fr\"><head><meta charset=\"UTF-8\"><title>Page introuvable</title></head><body><h1>Page introuvable</h1><p><a href=\"/\">Retour à l’accueil</a></p></body></html>"
+    );
+}
+
+app.use((req, res, next) => {
+  if (isHiddenDotPath(req.path)) {
+    return sendNotFound(res);
+  }
+  return next();
+});
 
 app.post("/api/contact", limiter, async (req, res) => {
   const raw = req.body || {};
@@ -198,52 +230,29 @@ app.use(
   })
 );
 
-app.use(express.static(publicDir, { maxAge: "1h" }));
+app.use(
+  express.static(publicDir, {
+    maxAge: "1h",
+    index: "index.html",
+    redirect: true,
+    fallthrough: true,
+  })
+);
 
-app.get(["/elegant", "/elegant/*"], (req, res, next) => {
-  if (path.extname(req.path)) {
-    return next();
-  }
-  res.sendFile(path.join(publicDir, "elegant", "index.html"), (err) => {
-    if (err) next(err);
+// Pages design : uniquement l’index (pas de repli SPA sur les sous-chemins).
+for (const dir of ["elegant", "minimal", "anime"]) {
+  app.get([`/${dir}`, `/${dir}/`], (req, res, next) => {
+    const file = path.join(publicDir, dir, "index.html");
+    if (!fs.existsSync(file)) return next();
+    res.sendFile(file, (err) => (err ? next(err) : undefined));
   });
-});
+}
 
-app.get(["/minimal", "/minimal/*"], (req, res, next) => {
-  if (path.extname(req.path)) {
-    return next();
-  }
-  res.sendFile(path.join(publicDir, "minimal", "index.html"), (err) => {
-    if (err) next(err);
-  });
-});
-
-app.get(["/anime", "/anime/*"], (req, res, next) => {
-  if (path.extname(req.path)) {
-    return next();
-  }
-  res.sendFile(path.join(publicDir, "anime", "index.html"), (err) => {
-    if (err) next(err);
-  });
-});
-
-app.get("*", (req, res, next) => {
+app.use((req, res) => {
   if (req.path.startsWith("/api")) {
-    return next();
+    return res.status(404).json({ ok: false, error: "Not found" });
   }
-  if (req.path.startsWith("/elegant")) {
-    return next();
-  }
-  if (req.path.startsWith("/minimal")) {
-    return next();
-  }
-  if (req.path.startsWith("/anime")) {
-    return next();
-  }
-  if (path.extname(req.path)) {
-    return res.status(404).send("Not found");
-  }
-  res.sendFile(path.join(publicDir, "index.html"));
+  return sendNotFound(res);
 });
 
 app.listen(port, () => {

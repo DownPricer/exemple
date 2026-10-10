@@ -61,6 +61,8 @@ export function privacyBodyHtml() {
       <p>Les données sont conservées le temps nécessaire au suivi de votre demande, puis archivées ou supprimées. Durée indicative : trois ans à compter du dernier contact, sauf obligation légale contraire. [À COMPLÉTER si votre politique interne diffère]</p>
       <h2>Destinataires</h2>
       <p>${escapeHtml(PUBLISHER.brand)} et son hébergeur (${escapeHtml(HOST.name)}), uniquement pour l’hébergement technique du site et la transmission des messages.</p>
+      <h2>Mesure d’audience</h2>
+      <p>Ce site utilise Cloudflare Web Analytics, un service fourni par Cloudflare, Inc., pour compter les visites et les pages vues. Cette mesure d’audience ne repose pas sur des cookies.</p>
       <h2>Vos droits</h2>
       <p>Vous disposez des droits d’accès, de rectification, d’effacement, de limitation, d’opposition et de portabilité, dans les limites prévues par le RGPD. Pour les exercer : <a href="mailto:${escapeHtml(PUBLISHER.email)}">${escapeHtml(PUBLISHER.email)}</a>.</p>
       <h2>Réclamation</h2>

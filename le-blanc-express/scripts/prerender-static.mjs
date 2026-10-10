@@ -5,6 +5,7 @@ import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
+import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { replaceInnerById } from "./replace-inner.mjs";
 import { LEGAL_PAGES } from "./legal-static.mjs";
 import { wrapStaticPage } from "./build-page-shell.mjs";
@@ -306,6 +307,7 @@ function prerenderDynamiqueIndex(C, O) {
     `<script type="application/ld+json" id="json-ld">${schema}</script>`
   );
 
+  html = injectCloudflareAnalytics(html);
   fs.writeFileSync(indexPath, html, "utf8");
   console.log(`Prérendu : ${indexPath}`);
 }
@@ -372,7 +374,24 @@ function prerenderLegalPages(C) {
   }
 }
 
+function prerender404Page(C) {
+  const filePath = path.join(publicDir, "404.html");
+  const html = wrapStaticPage({
+    title: "Page introuvable | SiteReady",
+    description: "La page demandée n’existe pas sur le site SiteReady.",
+    canonicalUrl: `${SITE_URL}/404.html`,
+    bodyHtml: `
+      <h1>Page introuvable</h1>
+      <p>Cette adresse n’existe pas ou n’est plus disponible.</p>
+      <p><a href="/">Retour à l’accueil SiteReady</a></p>`,
+    ogImage: C.seo.ogImage,
+  });
+  fs.writeFileSync(filePath, html, "utf8");
+  console.log(`Prérendu : ${filePath}`);
+}
+
 const C = loadContent(root);
 const O = loadOffers(root);
 prerenderDynamiqueIndex(C, O);
 prerenderLegalPages(C);
+prerender404Page(C);

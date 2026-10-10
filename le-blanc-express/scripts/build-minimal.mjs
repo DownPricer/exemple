@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { loadContent } from "./load-content.mjs";
 import { loadOffers } from "./load-offers.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
+import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -144,6 +145,7 @@ function patch(html, content, offers) {
   if (!out.includes("minimal-bridge.js")) {
     out = out.replace(/<\/body>/i, '  <script src="/minimal/minimal-bridge.js"></script>\n</body>');
   }
+  out = injectCloudflareAnalytics(out);
   return out;
 }
 

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { loadOffers } from "./load-offers.mjs";
 import { loadContent } from "./load-content.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
+import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { FAVICON_PATH, injectFaviconHead } from "./favicon-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -206,6 +207,7 @@ function patch(html, offers, content) {
     brandImg
   );
   if (content) out = applySeo(out, content);
+  out = injectCloudflareAnalytics(out);
   return out;
 }
 

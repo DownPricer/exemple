@@ -1,4 +1,5 @@
 import { escapeHtml } from "./legal-static.mjs";
+import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
 import { buildSeoHeadBlock } from "./seo-head.mjs";
 
@@ -42,5 +43,6 @@ export function wrapStaticPage({
 </html>
 `;
   html = injectFaviconHead(html);
+  html = injectCloudflareAnalytics(html);
   return html;
 }
