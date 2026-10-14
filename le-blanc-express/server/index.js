@@ -1,5 +1,6 @@
 import "dotenv/config";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import fs from "node:fs";
@@ -7,6 +8,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildRobotsTxt, buildSitemapXml } from "../scripts/sitemap-xml.mjs";
 import { LOCAL_CITY_SLUGS, LOCAL_TRADE_SLUGS } from "../scripts/site-config.mjs";
+import { createAdminRouter } from "./admin-routes.js";
+import { ensureDemosDir, startDemoCleanupScheduler } from "./demos/store.js";
+import { createDemoRouter } from "./demos/serve.js";
 import { logMissingEnvOnStartup } from "./env.js";
 import {
   buildAdminNotification,
@@ -23,6 +27,13 @@ const publicDir = path.join(__dirname, "..", "public");
 const port = Number(process.env.PORT) || 3001;
 
 logMissingEnvOnStartup();
+if (!process.env.ADMIN_PASSWORD_HASH) {
+  console.warn(
+    "ADMIN_PASSWORD_HASH manquant — /admin/demos refusera les connexions jusqu’à configuration."
+  );
+}
+ensureDemosDir();
+startDemoCleanupScheduler();
 
 const app = express();
 // Chaîne : visiteur → downpricer-nginx → client1-static → client1-app (2 proxies).
@@ -30,7 +41,9 @@ const app = express();
 app.set("trust proxy", 2);
 app.disable("x-powered-by");
 app.use(compression());
+app.use(cookieParser());
 app.use(express.json({ limit: "32kb" }));
+app.use(express.urlencoded({ extended: false, limit: "32kb" }));
 
 const limiter = rateLimit({
   windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 60 * 60 * 1000,
@@ -133,6 +146,10 @@ app.use((req, res, next) => {
   }
   return next();
 });
+
+// Admin + démos AVANT le static public (ne jamais servir public/admin ni public/demo).
+app.use("/admin", createAdminRouter());
+app.use("/demo", createDemoRouter());
 
 app.post("/api/contact", limiter, async (req, res) => {
   const raw = req.body || {};

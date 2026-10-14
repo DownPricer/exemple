@@ -14,16 +14,22 @@
     "prestart": "npm run build",
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test:mail": "node scripts/test-mail.mjs"
+    "test:mail": "node scripts/test-mail.mjs",
+    "hash-admin-password": "node scripts/hash-admin-password.mjs",
+    "test:demos": "node scripts/test-demos.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
-    "nodemailer": "^6.9.16"
+    "multer": "^2.4.0",
+    "nodemailer": "^6.9.16",
+    "yauzl": "^3.4.0"
   }
 }

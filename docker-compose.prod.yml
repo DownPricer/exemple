@@ -6,6 +6,10 @@ services:
     restart: unless-stopped
     env_file:
       - ./le-blanc-express/.env
+    volumes:
+      - client1_demos:/data/demos
+    environment:
+      DEMOS_DIR: /data/demos
     networks:
       - client1_internal
 
@@ -20,6 +24,10 @@ services:
     networks:
       - client1_internal
       - downpricer-shared
+
+volumes:
+  client1_demos:
+    name: client1_demos
 
 networks:
   client1_internal:

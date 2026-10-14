@@ -23,6 +23,8 @@ ${urls}
 export function buildRobotsTxt() {
   return `User-agent: *
 Allow: /
+Disallow: /demo/
+Disallow: /admin/
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
