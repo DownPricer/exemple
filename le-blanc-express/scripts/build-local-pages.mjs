@@ -38,7 +38,7 @@ function buildBody(page) {
       <h1>${escapeHtml(page.h1)}</h1>
       ${paras}
       <h2>Tarifs SiteReady</h2>
-      <p>À partir de 500&nbsp;€ + hébergement 5&nbsp;€/mois pour une vitrine, 50&nbsp;€/mois avec hébergement et nom de domaine inclus, ou sur devis. Maquette gratuite avant engagement.</p>
+      <p>À partir de 500&nbsp;€ + 15&nbsp;€/mois pour une vitrine. 15&nbsp;€/mois : hébergement du site + suivi du référencement (optimisations SEO régulières, conseils pour votre fiche Google, vérification de votre visibilité). 50&nbsp;€/mois avec hébergement et nom de domaine inclus, ou sur devis. Maquette gratuite avant engagement.</p>
       <p><a class="btn btn--pill btn--yellow" href="/#contact">Demander ma maquette gratuite</a></p>
       <h2>Questions fréquentes</h2>
       <div class="faq local-faq">${faq}

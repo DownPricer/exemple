@@ -161,7 +161,7 @@ function injectContactFormCopy(html, C, O) {
       opt.value === "once" && O.planOnceFormLabel ? O.planOnceFormLabel : opt.label;
     out = out.replace(
       new RegExp(
-        `(<button type="button" class="pill-choice[^"]*" data-pill-group="plan" data-value="${opt.value}"[^>]*>)\\s*(</button>)`,
+        `(<button type="button" class="pill-choice[^"]*" data-pill-group="plan" data-value="${opt.value}"[^>]*>)[\\s\\S]*?(</button>)`,
         "i"
       ),
       `$1${escapeHtml(label)}$2`

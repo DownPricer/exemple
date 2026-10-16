@@ -108,7 +108,7 @@ window.SITE_CONTENT = {
         name: "En une fois",
         price: "à partir de 500 €",
         priceNote: "",
-        hostingLine: "+ hébergement 5 €/mois",
+        hostingLine: "+ 15 €/mois",
         bullets: [
           "Site vitrine pour présenter votre activité",
           "Pensé pour le téléphone",
