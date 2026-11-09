@@ -30,6 +30,12 @@ export const DELIVERABLE_SITE_CREDIT = {
 
 export const DESIGN_PATHS = ["/", "/elegant/", "/minimal/", "/anime/"];
 
+export const VTC_PATHS = [
+  "/vtc/",
+  "/vtc/mentions-legales.html",
+  "/vtc/politique-confidentialite.html",
+];
+
 export const LEGAL_HTML_PAGES = [
   "/mentions-legales.html",
   "/politique-confidentialite.html",
@@ -60,6 +66,7 @@ export const LOCAL_TRADE_SLUGS = [
 export function allSitemapPaths() {
   return [
     ...DESIGN_PATHS,
+    ...VTC_PATHS,
     ...LEGAL_HTML_PAGES,
     ...LOCAL_CITY_SLUGS.map((s) => `/${s}`),
     ...LOCAL_TRADE_SLUGS.map((s) => `/${s}`),

@@ -5,6 +5,7 @@ import { loadOffers } from "./load-offers.mjs";
 import { loadContent } from "./load-content.mjs";
 import { injectSeoHead } from "./seo-head.mjs";
 import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
+import { injectCallbar } from "./inject-callbar.mjs";
 import { FAVICON_PATH, injectFaviconHead } from "./favicon-head.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -208,6 +209,7 @@ function patch(html, offers, content) {
   );
   if (content) out = applySeo(out, content);
   out = injectCloudflareAnalytics(out);
+  out = injectCallbar(out);
   return out;
 }
 

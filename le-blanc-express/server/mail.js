@@ -58,6 +58,13 @@ const PLAN_LABELS = {
   indecis: "À définir",
   essentiel: "Essentiel",
   signature: "Signature",
+  vtc: "Offre VTC",
+};
+
+const VTC_SUJET_LABELS = {
+  demo: "Une démo",
+  infos: "Plus d'informations",
+  refonte: "Refaire mon site",
 };
 
 export function formatPlan(plan) {
@@ -75,12 +82,21 @@ export function formatSubmissionDate() {
 
 export function buildAdminNotification(data) {
   const city = data.city || "—";
+  const isVtc = data.formVariant === "vtc";
+  const sujetLine =
+    isVtc && data.sujet
+      ? VTC_SUJET_LABELS[String(data.sujet).trim()] || data.sujet
+      : "";
+
   const subject = sanitizeHeader(
-    `Nouvelle demande — ${data.name} (${data.activity}, ${city})`
+    isVtc
+      ? `Nouvelle demande VTC — ${data.name || "—"}${sujetLine ? ` (${sujetLine})` : ""}`
+      : `Nouvelle demande — ${data.name} (${data.activity}, ${city})`
   );
 
   const lines = [
     `Date : ${formatSubmissionDate()}`,
+    ...(isVtc && sujetLine ? [`Sujet : ${sujetLine}`] : []),
     `Nom : ${data.name || "—"}`,
     `Entreprise : ${data.company || "—"}`,
     `Activité : ${data.activity || "—"}`,
@@ -102,12 +118,21 @@ export function buildAdminNotification(data) {
 
 export function buildClientConfirmation(data, recontactDelay, replyTo) {
   const name = data.name || "Bonjour";
-  const subject = sanitizeHeader("Votre demande est bien reçue — SiteReady");
+  const isVtc = data.formVariant === "vtc";
+  const subject = sanitizeHeader(
+    isVtc
+      ? "Votre demande VTC est bien reçue — SiteReady SHD"
+      : "Votre demande est bien reçue — SiteReady"
+  );
+
+  const bodyLine = isVtc
+    ? `merci pour votre message. Nous vous recontactons rapidement (sous ${recontactDelay}) pour une démo ou pour répondre à vos questions.`
+    : `merci pour votre message. Nous revenons vers vous sous ${recontactDelay} avec votre maquette et votre devis, gratuitement.`;
 
   const text = [
     `Bonjour ${name},`,
     "",
-    `merci pour votre message. Nous revenons vers vous sous ${recontactDelay} avec votre maquette et votre devis, gratuitement.`,
+    bodyLine,
     "",
     "Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message.",
     "",
@@ -120,7 +145,7 @@ export function buildClientConfirmation(data, recontactDelay, replyTo) {
 <body style="margin:0;padding:24px 16px;background:#f6f5ef;font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.55;color:#173d2e;">
   <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:24px 20px;">
     <p style="margin:0 0 16px;">Bonjour ${escapeHtml(name)},</p>
-    <p style="margin:0 0 16px;">merci pour votre message. Nous revenons vers vous sous <strong>${escapeHtml(recontactDelay)}</strong> avec votre maquette et votre devis, gratuitement.</p>
+    <p style="margin:0 0 16px;">${escapeHtml(bodyLine)}</p>
     <p style="margin:0 0 16px;color:#656f66;font-size:15px;">Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce message.</p>
     <p style="margin:0;">— SiteReady, <a href="https://sitereadyshd.fr" style="color:#173d2e;">sitereadyshd.fr</a></p>
   </div>

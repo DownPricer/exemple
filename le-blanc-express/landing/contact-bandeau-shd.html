@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact SiteReady SHD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Maquette : formulaire de contact + bandeau d'appel fixé en bas. Page claire, même identité que la landing. */
+:root {
+  --bg: #f2f4f8;
+  --paper: #ffffff;
+  --ink: #0c1426;
+  --muted: #57617a;
+  --line: #d3d9e6;
+  --amber: #f2b01e;
+  --amber-ink: #3a2a00;
+  --night: #0c1426;
+  --err: #b3261e;
+  --ok: #178046;
+  --display: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--body); padding-bottom: 96px; }
+.wrap { max-width: 920px; margin: 0 auto; padding: 36px 20px 24px; display: grid; gap: 28px; grid-template-columns: 1fr; }
+@media (min-width: 820px) { .wrap { grid-template-columns: 0.9fr 1.1fr; gap: 48px; align-items: start; padding-top: 56px; } }
+h1 { font: 800 clamp(2rem, 6vw, 3rem)/1.05 var(--display); letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.intro p { color: var(--muted); margin-top: 14px; max-width: 40ch; }
+.intro ul { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.intro li::before { content: "✓"; color: var(--ok); font-weight: 800; margin-right: 8px; }
+.kicker { font: 700 .8rem var(--body); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 12px; display: block; }
+
+form { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+label, legend { font: 600 .95rem var(--body); }
+.opt { font-weight: 400; color: var(--muted); }
+input[type=text], input[type=tel], input[type=email], select, textarea {
+  font: 400 1rem var(--body); color: var(--ink); background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px; width: 100%;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+.row { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .row { grid-template-columns: 1fr 1fr; } }
+.choices { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; margin: 0; }
+.choices label { cursor: pointer; }
+.choices input { position: absolute; opacity: 0; pointer-events: none; }
+.choices span { display: inline-block; padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 999px; font-weight: 600; font-size: .95rem; }
+.choices input:checked + span { background: var(--night); border-color: var(--night); color: #fff; }
+.choices input:focus-visible + span { outline: 3px solid var(--amber); outline-offset: 2px; }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: .88rem; color: var(--muted); }
+.consent input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--night); flex: none; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.err { color: var(--err); font-size: .86rem; min-height: 1.1em; }
+.invalid { border-color: var(--err) !important; }
+.btn { font: 700 1rem var(--body); background: var(--amber); color: var(--amber-ink); border: 0; border-radius: 10px; padding: 14px 22px; cursor: pointer; }
+.btn:hover { filter: brightness(1.06); }
+.status { border-radius: 12px; padding: 14px 16px; font-size: .95rem; display: none; }
+.status.show { display: block; background: #fff7dc; border: 1px solid var(--amber); color: var(--ink); }
+
+/* Bandeau d'appel : fin, clair, collé en bas. */
+.callbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--paper); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px -12px rgba(12,20,38,.35);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+.callbar-in { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+.callbar p { margin: 0; font-size: .95rem; line-height: 1.3; }
+.callbar p b { font-weight: 700; }
+.callbar .num { font-weight: 700; letter-spacing: .02em; white-space: nowrap; }
+.callbar .num:empty { display: none; }
+.callbar .go { flex: none; text-decoration: none; background: var(--night); color: #fff; font: 700 .95rem var(--body); padding: 10px 18px; border-radius: 999px; border: 0; cursor: pointer; }
+.callbar .x { flex: none; background: none; border: 0; font-size: 1.3rem; line-height: 1; color: var(--muted); cursor: pointer; padding: 6px 8px; }
+.callbar[hidden] { display: none; }
+@media (max-width: 520px) { .callbar p span.long { display: none; } }
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <div class="intro">
+    <span class="kicker">Contact</span>
+    <h1>Une démo ou une question ? Écrivez-nous.</h1>
+    <p>Dites-nous ce qui vous intéresse. Nous vous répondons par téléphone ou par SMS, comme vous préférez.</p>
+    <ul>
+      <li>Démo de 15 minutes avec vos propres tarifs</li>
+      <li>Sans engagement pour la démo</li>
+      <li>Réponse rapide</li>
+    </ul>
+  </div>
+
+  <form id="contactForm" novalidate>
+    <fieldset class="choices">
+      <legend>Je souhaite</legend>
+      <label><input type="radio" name="sujet" value="demo" checked><span>Une démo</span></label>
+      <label><input type="radio" name="sujet" value="infos"><span>Plus d'informations</span></label>
+      <label><input type="radio" name="sujet" value="refonte"><span>Refaire mon site</span></label>
+    </fieldset>
+
+    <div class="row">
+      <div class="field">
+        <label for="nom">Nom ou entreprise</label>
+        <input type="text" id="nom" name="nom" autocomplete="name" maxlength="80">
+        <span class="err" id="e-nom" role="alert"></span>
+      </div>
+      <div class="field">
+        <label for="tel">Téléphone</label>
+        <input type="tel" id="tel" name="tel" autocomplete="tel" inputmode="tel" maxlength="20">
+        <span class="err" id="e-tel" role="alert"></span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">E-mail <span class="opt">(si vous préférez être recontacté ainsi)</span></label>
+      <input type="email" id="email" name="email" autocomplete="email" maxlength="120">
+      <span class="err" id="e-email" role="alert"></span>
+    </div>
+
+    <div class="field">
+      <label for="msg">Votre message <span class="opt">(facultatif)</span></label>
+      <textarea id="msg" name="message" maxlength="1000"></textarea>
+    </div>
+
+    <!-- Champ piège anti-spam : un humain ne le voit pas. -->
+    <div class="hp" aria-hidden="true"><label for="site">Ne pas remplir</label><input type="text" id="site" name="site" tabindex="-1" autocomplete="off"></div>
+
+    <div class="field">
+      <label class="consent" for="rgpd"><input type="checkbox" id="rgpd" name="rgpd"><span>J'accepte que mes informations servent uniquement à me recontacter pour cette demande.</span></label>
+      <span class="err" id="e-rgpd" role="alert"></span>
+    </div>
+
+    <button class="btn" type="submit">Envoyer ma demande</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </form>
+</main>
+
+<!-- Bandeau d'appel. Le numéro n'est PAS écrit dans le HTML : il est assemblé par le script après la première interaction. -->
+<aside class="callbar" id="callbar" data-nosnippet aria-label="Contact téléphonique">
+  <div class="callbar-in">
+    <p><b>Une démo ou plus d'infos ?</b> <span class="long">Appelez-nous</span> <span class="num" id="callNum" aria-live="polite"></span></p>
+    <button class="go" id="callBtn" type="button">Appeler</button>
+    <button class="x" id="callClose" type="button" aria-label="Fermer le bandeau">×</button>
+  </div>
+</aside>
+
+<script>
+(function () {
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- Bandeau d'appel ---------- */
+  /* Le numéro est découpé et jamais présent en texte brut dans la page. Il n'apparaît qu'après une vraie interaction
+     (toucher, souris, clavier, défilement), ce qui évite qu'un robot l'indexe. Cela réduit le risque, sans le supprimer à 100 %. */
+  var P = ["07", "43", "60", "63", "44"];
+  var bar = $("callbar"), numEl = $("callNum"), btn = $("callBtn");
+  function number() { return P.join(""); }
+  function pretty() { return P.join(" "); }
+  var revealed = false;
+  function reveal() {
+    if (revealed) return;
+    revealed = true;
+    numEl.textContent = pretty();
+    ["pointerdown", "mousemove", "keydown", "scroll", "touchstart"].forEach(function (ev) { window.removeEventListener(ev, reveal); });
+  }
+  ["pointerdown", "mousemove", "keydown", "scroll", "touchstart"].forEach(function (ev) { window.addEventListener(ev, reveal, { passive: true }); });
+  btn.addEventListener("click", function () {
+    reveal();
+    /* Le lien d'appel n'est créé qu'au clic. Dans cet aperçu le téléphone ne s'ouvre pas, le numéro s'affiche. */
+    try { window.location.href = "tel:+33" + number().slice(1); } catch (e) {}
+  });
+  try { if (sessionStorage.getItem("callbar-closed") === "1") bar.hidden = true; } catch (e) {}
+  $("callClose").addEventListener("click", function () {
+    bar.hidden = true; document.body.style.paddingBottom = "0";
+    try { sessionStorage.setItem("callbar-closed", "1"); } catch (e) {}
+  });
+  if (bar.hidden) document.body.style.paddingBottom = "0";
+
+  /* ---------- Formulaire ---------- */
+  var f = $("contactForm");
+  function setErr(id, msg, fieldId) {
+    $("e-" + id).textContent = msg || "";
+    var el = $(fieldId || id); if (el) el.classList.toggle("invalid", !!msg);
+  }
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var nom = $("nom").value.trim(), tel = $("tel").value.trim(), mail = $("email").value.trim();
+    var ok = true;
+    setErr("nom", nom.length < 2 ? "Indiquez votre nom ou celui de votre entreprise." : "");
+    if (nom.length < 2) ok = false;
+    var telDigits = tel.replace(/[\s.\-]/g, "");
+    var telOk = /^(\+33|0033|0)[1-9]\d{8}$/.test(telDigits);
+    var mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail);
+    if (!tel && !mail) { setErr("tel", "Indiquez un téléphone ou un e-mail pour qu'on puisse vous répondre."); ok = false; }
+    else if (tel && !telOk) { setErr("tel", "Ce numéro n'a pas l'air valide (ex. 06 12 34 56 78)."); ok = false; }
+    else setErr("tel", "");
+    if (mail && !mailOk) { setErr("email", "Cette adresse e-mail n'a pas l'air valide."); ok = false; } else setErr("email", "");
+    if (!$("rgpd").checked) { setErr("rgpd", "Cochez la case pour que nous puissions vous répondre.", "rgpd"); ok = false; } else setErr("rgpd", "");
+    var st = $("status"); st.className = "status";
+    if (!ok) { st.textContent = ""; return; }
+    if ($("site").value) { return; } /* champ piège rempli : on ne fait rien */
+    st.className = "status show";
+    st.textContent = "Aperçu : le formulaire est valide, mais rien n'est envoyé depuis cette maquette. Sur le vrai site, il part vers votre serveur.";
+  });
+})();
+</script>
+</body>
+</html>

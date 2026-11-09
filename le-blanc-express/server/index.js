@@ -60,25 +60,92 @@ function isNonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+const VTC_SUJET_ACTIVITY = {
+  demo: "Demande démo VTC",
+  infos: "Informations offre VTC",
+  refonte: "Refonte site (offre VTC)",
+};
+
+function isVtcForm(body) {
+  return body?.formVariant === "vtc";
+}
+
+function honeypotFilled(body) {
+  return isNonEmptyString(body.company_website) || isNonEmptyString(body.site);
+}
+
 function normalizeContactPayload(body) {
+  const sujet = String(body.sujet || "").trim();
+  let activity = isNonEmptyString(body.activity) ? body.activity.trim() : "";
+  if (body.formVariant === "vtc") {
+    activity = VTC_SUJET_ACTIVITY[sujet] || activity || "Contact offre VTC";
+  }
+
+  const companyWebsite = isNonEmptyString(body.company_website)
+    ? body.company_website.trim()
+    : isNonEmptyString(body.site)
+      ? body.site.trim()
+      : "";
+
   return {
+    formVariant: String(body.formVariant || "").trim(),
+    sujet,
     name: isNonEmptyString(body.name) ? body.name.trim() : "",
     company: isNonEmptyString(body.company) ? body.company.trim() : "",
-    activity: isNonEmptyString(body.activity) ? body.activity.trim() : "",
+    activity,
     city: isNonEmptyString(body.city) ? body.city.trim() : "",
     phone: isNonEmptyString(body.phone) ? body.phone.trim() : "",
     email: isNonEmptyString(body.email) ? body.email.trim() : "",
     hasWebsite: body.hasWebsite === "yes" ? "yes" : body.hasWebsite === "no" ? "no" : "",
     websiteUrl: isNonEmptyString(body.websiteUrl) ? body.websiteUrl.trim() : "",
-    plan: String(body.plan || "").trim(),
+    plan: String(body.plan || "").trim() || (body.formVariant === "vtc" ? "vtc" : ""),
     preferredStyle: isNonEmptyString(body.preferredStyle) ? body.preferredStyle.trim() : "—",
     message: isNonEmptyString(body.message) ? body.message.trim() : "",
     consent: body.consent === true || body.consent === "true",
-    company_website: isNonEmptyString(body.company_website) ? body.company_website.trim() : "",
+    company_website: companyWebsite,
   };
 }
 
+function validateVtcContact(body) {
+  const errors = {};
+  const name = isNonEmptyString(body.name) ? body.name.trim() : "";
+  if (name.length < 2) {
+    errors.name = "Indiquez votre nom ou celui de votre entreprise.";
+  }
+
+  const phone = isNonEmptyString(body.phone) ? body.phone.trim() : "";
+  const email = isNonEmptyString(body.email) ? body.email.trim() : "";
+
+  if (!phone && !email) {
+    errors.phone = "Indiquez un téléphone ou un e-mail pour qu'on puisse vous répondre.";
+  } else {
+    if (phone) {
+      const telDigits = phone.replace(/[\s.\-]/g, "");
+      if (!/^(\+33|0033|0)[1-9]\d{8}$/.test(telDigits)) {
+        errors.phone = "Ce numéro n'a pas l'air valide (ex. 06 12 34 56 78).";
+      }
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Cette adresse e-mail n'a pas l'air valide.";
+    }
+  }
+
+  if (body.consent !== true && body.consent !== "true") {
+    errors.consent = "Cochez la case pour que nous puissions vous répondre.";
+  }
+
+  if (honeypotFilled(body)) {
+    errors._spam = true;
+  }
+
+  return errors;
+}
+
 function validateContact(body) {
+  if (isVtcForm(body)) {
+    return validateVtcContact(body);
+  }
+
   const errors = {};
 
   if (!isNonEmptyString(body.name)) {
@@ -104,7 +171,7 @@ function validateContact(body) {
     errors.consent = "Veuillez accepter l’utilisation de vos données pour être recontacté.";
   }
 
-  if (isNonEmptyString(body.company_website)) {
+  if (honeypotFilled(body)) {
     errors._spam = true;
   }
 
@@ -242,8 +309,8 @@ for (const slug of localSlugs) {
 app.use(
   "/assets",
   express.static(path.join(publicDir, "assets"), {
-    maxAge: "365d",
-    immutable: true,
+    maxAge: process.env.NODE_ENV === "production" ? "365d" : 0,
+    immutable: process.env.NODE_ENV === "production",
   })
 );
 
@@ -257,7 +324,7 @@ app.use(
 );
 
 // Pages design : uniquement l’index (pas de repli SPA sur les sous-chemins).
-for (const dir of ["elegant", "minimal", "anime"]) {
+for (const dir of ["elegant", "minimal", "anime", "vtc"]) {
   app.get([`/${dir}`, `/${dir}/`], (req, res, next) => {
     const file = path.join(publicDir, dir, "index.html");
     if (!fs.existsSync(file)) return next();

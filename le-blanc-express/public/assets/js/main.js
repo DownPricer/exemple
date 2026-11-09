@@ -467,7 +467,12 @@
     });
   }
 
+  const contactApi = window.SiteReadyContact;
   function showFieldError(form, name, message) {
+    if (contactApi?.showFieldError) {
+      contactApi.showFieldError(form, name, message);
+      return;
+    }
     const el = form.querySelector(`[data-error-for="${name}"]`);
     const input = form.querySelector(`[name="${name}"]`);
     if (el) el.textContent = message || "";
@@ -528,6 +533,35 @@
       consent: true,
       company_website: String(data.get("company_website") || "").trim(),
     };
+    const onSuccess = () => {
+      form.reset();
+      const pf = form.querySelector('[name="preferredStyle"]');
+      if (pf) pf.value = C.themeSwitch.dynamique;
+      setPillGroup(form, "hasWebsite", "no");
+      setPillGroup(form, "plan", "once");
+      const websiteWrap = document.getElementById("website-url-wrap");
+      if (websiteWrap) websiteWrap.hidden = true;
+    };
+
+    if (contactApi?.postContact) {
+      await contactApi.postContact({
+        form,
+        payload,
+        statusEl: status,
+        submitBtn,
+        labels: {
+          submit: C.contact.form.submit,
+          sending: C.contact.form.sending,
+          success: C.contact.success,
+          errorFields: "Vérifiez les champs en rouge.",
+          errorSend: "L’envoi a échoué. Réessayez ou écrivez-nous par e-mail.",
+          errorNetwork: "Connexion impossible. Réessayez ou écrivez-nous par e-mail.",
+        },
+        onSuccess,
+      });
+      return;
+    }
+
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = C.contact.form.sending;
@@ -544,13 +578,7 @@
       });
       const body = await res.json().catch(() => ({}));
       if (res.ok && body.ok) {
-        form.reset();
-        const pf = form.querySelector('[name="preferredStyle"]');
-        if (pf) pf.value = C.themeSwitch.dynamique;
-        setPillGroup(form, "hasWebsite", "no");
-        setPillGroup(form, "plan", "once");
-        const websiteWrap = document.getElementById("website-url-wrap");
-        if (websiteWrap) websiteWrap.hidden = true;
+        onSuccess();
         if (status) {
           status.className = "form-status form-status--success";
           status.textContent = C.contact.success;

@@ -1277,6 +1277,11 @@ a.theme-switch__btn {
   outline-offset: 3px;
 }
 
+.site-footer a.footer-vtc-link {
+  font-weight: 500;
+  opacity: 0.85;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);

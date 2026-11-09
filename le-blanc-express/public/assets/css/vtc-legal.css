@@ -1,0 +1,21 @@
+/* Pages légales /vtc — sobre, lisible */
+.vtc-legal-page {
+  margin: 0;
+  font: 400 17px/1.55 system-ui, "Segoe UI", sans-serif;
+  color: #0c1426;
+  background: #f2f4f8;
+  padding: 2rem 1rem 3rem;
+}
+.vtc-legal-wrap {
+  max-width: 42rem;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #d9deea;
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+}
+.vtc-legal-wrap h1 { font-size: 1.75rem; margin: 0 0 1rem; }
+.vtc-legal-wrap h2 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+.vtc-legal-wrap p { margin: 0.5rem 0; }
+.vtc-legal-wrap a { color: #0c1426; }
+:focus-visible { outline: 3px solid #f2b01e; outline-offset: 2px; }

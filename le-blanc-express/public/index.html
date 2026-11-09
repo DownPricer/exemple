@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="/assets/css/styles.css">
   <script type="application/ld+json" id="json-ld">[{"@context":"https://schema.org","@type":"ProfessionalService","name":"SiteReady","description":"Création de sites vitrines pour artisans et commerçants en Ardèche. Maquette et devis gratuits.","url":"https://sitereadyshd.fr","email":"contact@sitereadyshd.fr","areaServed":[{"@type":"AdministrativeArea","name":"Ardèche"},{"@type":"City","name":"Aubenas"},{"@type":"City","name":"Annonay"},{"@type":"City","name":"Privas"},{"@type":"City","name":"Ruoms"},{"@type":"City","name":"Vals-les-Bains"},{"@type":"City","name":"Tournon-sur-Rhône"},{"@type":"City","name":"Le Teil"},{"@type":"City","name":"Largentière"}],"priceRange":"€€"},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"En combien de temps avez-vous la maquette ?","acceptedAnswer":{"@type":"Answer","text":"En général sous 48 heures ouvrées après notre échange. Pour une demande urgente, dites-le dans le message : on s’adapte quand c’est possible."}},{"@type":"Question","name":"Qui écrit les textes du site ?","acceptedAnswer":{"@type":"Answer","text":"On les rédige ensemble. Vous me donnez l’essentiel sur votre activité, vos horaires et votre zone ; je m’occupe de les mettre en forme, clairement, sans jargon."}},{"@type":"Question","name":"Que se passe-t-il si j’arrête l’abonnement à 50 €/mois ?","acceptedAnswer":{"@type":"Answer","text":"Vous pouvez arrêter quand vous voulez. Ensuite, vous pouvez racheter votre site et votre nom de domaine, ou le site est mis hors ligne. Tout est expliqué avant la mise en ligne."}},{"@type":"Question","name":"Y a-t-il des frais après la création ?","acceptedAnswer":{"@type":"Answer","text":"Avec le paiement en une fois, 15 €/mois : hébergement du site + suivi du référencement (optimisations SEO régulières, conseils pour votre fiche Google, vérification de votre visibilité). Avec l'abonnement à 50 €/mois, l'hébergement est inclus."}},{"@type":"Question","name":"Puis-je modifier mon site plus tard ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Avec la formule mensuelle, deux petites modifications par mois sont incluses. Pour la formule en une fois, on peut prévoir des mises à jour sur devis."}},{"@type":"Question","name":"À qui appartient le nom de domaine ?","acceptedAnswer":{"@type":"Answer","text":"Il est enregistré et géré par SiteReady pendant le contrat. Un transfert vers le client est possible pour 100 €."}}]}]</script>
 <noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>
+  <link rel="stylesheet" href="/assets/css/callbar-shd.css">
 </head>
 <body data-page="dynamique">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -427,6 +428,7 @@
         <a href="/mentions-legales.html">Mentions légales</a>
         <a href="/politique-confidentialite.html">Politique de confidentialité</a>
         <a href="/conditions-de-vente.html">Conditions de vente</a>
+        <a href="/vtc/" class="footer-vtc-link">Offre VTC</a>
       </nav>
       <p data-footer-tagline>SiteReady — Ardèche</p>
     </div>
@@ -434,8 +436,18 @@
 
   <script src="/assets/js/offers-shared.js"></script>
   <script src="/assets/js/content.js"></script>
+  <script src="/assets/js/contact-api.js"></script>
   <script src="/assets/js/main.js"></script>
   <script src="/assets/js/theme-switch.js"></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0f05b64f5be2491e8c467e7a7546d590"}'></script><!-- End Cloudflare Web Analytics -->
+
+<aside class="callbar-shd" id="callbar" data-nosnippet aria-label="Contact téléphonique">
+  <div class="callbar-shd__in">
+    <p><b>Une démo ou plus d'infos ?</b> <span class="callbar-shd__long">Appelez-nous</span> <span class="callbar-shd__num" id="callNum" aria-live="polite"></span></p>
+    <button class="callbar-shd__go" id="callBtn" type="button">Appeler</button>
+    <button class="callbar-shd__x" id="callClose" type="button" aria-label="Fermer le bandeau">×</button>
+  </div>
+</aside>
+  <script src="/assets/js/callbar-shd.js" defer></script>
 </body>
 </html>

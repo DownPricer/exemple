@@ -10,6 +10,7 @@ import { replaceInnerById } from "./replace-inner.mjs";
 import { LEGAL_PAGES } from "./legal-static.mjs";
 import { wrapStaticPage } from "./build-page-shell.mjs";
 import { LOCAL_PAGES } from "./local-pages-data.mjs";
+import { injectCallbar } from "./inject-callbar.mjs";
 import { LOCAL_CITY_SLUGS, LOCAL_TRADE_SLUGS, SITE_URL } from "./site-config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -189,6 +190,14 @@ function ensureOffersScript(html) {
   );
 }
 
+function ensureContactApiScript(html) {
+  if (html.includes("contact-api.js")) return html;
+  return html.replace(
+    '<script src="/assets/js/main.js"></script>',
+    '<script src="/assets/js/contact-api.js"></script>\n  <script src="/assets/js/main.js"></script>'
+  );
+}
+
 function prerenderDynamiqueIndex(C, O) {
   const indexPath = path.join(publicDir, "index.html");
   let html = fs.readFileSync(indexPath, "utf8");
@@ -298,6 +307,7 @@ function prerenderDynamiqueIndex(C, O) {
   html = injectHeroFallback(html, C);
   html = injectContactFormCopy(html, C, O);
   html = ensureOffersScript(html);
+  html = ensureContactApiScript(html);
 
   html = injectFooterZones(html);
 
@@ -308,6 +318,7 @@ function prerenderDynamiqueIndex(C, O) {
   );
 
   html = injectCloudflareAnalytics(html);
+  html = injectCallbar(html);
   fs.writeFileSync(indexPath, html, "utf8");
   console.log(`Prérendu : ${indexPath}`);
 }

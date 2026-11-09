@@ -2,6 +2,7 @@ import { escapeHtml } from "./legal-static.mjs";
 import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
 import { buildSeoHeadBlock } from "./seo-head.mjs";
+import { injectCallbar } from "./inject-callbar.mjs";
 
 export function wrapStaticPage({
   title,
@@ -44,5 +45,6 @@ export function wrapStaticPage({
 `;
   html = injectFaviconHead(html);
   html = injectCloudflareAnalytics(html);
+  html = injectCallbar(html);
   return html;
 }
