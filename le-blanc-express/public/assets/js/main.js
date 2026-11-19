@@ -353,15 +353,17 @@
     const grid = document.getElementById("examples-grid");
     if (grid) {
       grid.innerHTML = C.examples.items
-        .map(
-          (item) => `
-        <figure class="example-card reveal">
+        .map((item) => {
+          const inner = `
           <span class="example-card__fictif">Exemple fictif</span>
           <span class="example-card__label">${escapeHtml(item.label)}</span>
-          <figcaption class="example-card__trade">${escapeHtml(item.trade)}</figcaption>
-          ${buildPhoneMock(exampleMockInner(item))}
-        </figure>`
-        )
+          <span class="example-card__trade">${escapeHtml(item.trade)}</span>
+          ${buildPhoneMock(exampleMockInner(item))}`;
+          if (item.href) {
+            return `<a class="example-card example-card--link reveal" href="${escapeHtml(item.href)}">${inner}</a>`;
+          }
+          return `<figure class="example-card reveal">${inner}</figure>`;
+        })
         .join("");
     }
   }
@@ -644,7 +646,7 @@
     });
     initPillGroups(form);
     const consentText = form.querySelector("[data-label-consent]");
-    const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>${escapeHtml(f.consentAndTerms || " et aux ")}<a href="/conditions-de-vente.html">${escapeHtml(f.consentTermsLink || "conditions de vente")}</a>.`;
+    const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
     if (consentText) {
       consentText.innerHTML = consentHtml;
     } else {

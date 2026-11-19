@@ -7,6 +7,7 @@ import { injectSeoHead } from "./seo-head.mjs";
 import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { injectCallbar } from "./inject-callbar.mjs";
 import { FAVICON_PATH, injectFaviconHead } from "./favicon-head.mjs";
+import { injectFooterZones, injectFooterZonesStyles } from "./footer-zones.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -165,10 +166,6 @@ function patch(html, offers, content) {
     'href="/politique-confidentialite.html"'
   );
   out = out.replace(
-    /<a href="\/mentions-legales\.html">Mentions légales<\/a><a href="\/politique-confidentialite\.html">/,
-    '<a href="/mentions-legales.html">Mentions légales</a><a href="/conditions-de-vente.html">Conditions de vente</a><a href="/politique-confidentialite.html">'
-  );
-  out = out.replace(
     /<p class="price">500 €<\/p>\s*<p class="price-sub">à partir de<\/p>/g,
     '<p class="price">à partir de 500 €</p><p class="price-sub">&nbsp;</p>'
   );
@@ -179,11 +176,6 @@ function patch(html, offers, content) {
     ""
   );
   out = out.replace(/(<input id="email"[^>]*)(>)/i, '$1 required aria-required="true"$2');
-  out = out.replace(
-    /(<label class="checkbox-label"[^>]*>[\s\S]*?<span>)(J’accepte[\s\S]*?politique de confidentialité)(<\/a>\.<\/span>)/i,
-    (_, a, mid, end) =>
-      `${a}${mid}</a> et aux <a href="/conditions-de-vente.html">conditions de vente</a>${end}`
-  );
 
   const hiddenStyle = '<input type="hidden" name="preferredStyle" id="preferredStyle" value="Élégant">';
   if (!out.includes('name="preferredStyle"')) {
@@ -208,6 +200,8 @@ function patch(html, offers, content) {
     brandImg
   );
   if (content) out = applySeo(out, content);
+  out = injectFooterZonesStyles(out, "elegant");
+  out = injectFooterZones(out, { footerTag: "footer" });
   out = injectCloudflareAnalytics(out);
   out = injectCallbar(out);
   return out;

@@ -9,9 +9,9 @@ import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { replaceInnerById } from "./replace-inner.mjs";
 import { LEGAL_PAGES } from "./legal-static.mjs";
 import { wrapStaticPage } from "./build-page-shell.mjs";
-import { LOCAL_PAGES } from "./local-pages-data.mjs";
 import { injectCallbar } from "./inject-callbar.mjs";
-import { LOCAL_CITY_SLUGS, LOCAL_TRADE_SLUGS, SITE_URL } from "./site-config.mjs";
+import { CGV_PROVISIONAL_BANNER, SITE_URL } from "./site-config.mjs";
+import { injectFooterZones } from "./footer-zones.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -275,15 +275,17 @@ function prerenderDynamiqueIndex(C, O) {
   html = replaceInnerById(html, "included-list", includedHtml);
 
   const examplesHtml = C.examples.items
-    .map(
-      (item) => `
-        <figure class="example-card reveal">
+    .map((item) => {
+      const inner = `
           <span class="example-card__fictif">Exemple fictif</span>
           <span class="example-card__label">${escapeHtml(item.label)}</span>
-          <figcaption class="example-card__trade">${escapeHtml(item.trade)}</figcaption>
-          <p class="example-card__mock-title">${escapeHtml(item.mockTitle)}</p>
-        </figure>`
-    )
+          <span class="example-card__trade">${escapeHtml(item.trade)}</span>
+          <p class="example-card__mock-title">${escapeHtml(item.mockTitle)}</p>`;
+      if (item.href) {
+        return `<a class="example-card example-card--link reveal" href="${escapeHtml(item.href)}">${inner}</a>`;
+      }
+      return `<figure class="example-card reveal">${inner}</figure>`;
+    })
     .join("");
   html = replaceInnerById(html, "examples-grid", examplesHtml);
 
@@ -323,62 +325,21 @@ function prerenderDynamiqueIndex(C, O) {
   console.log(`Prérendu : ${indexPath}`);
 }
 
-function labelForSlug(slug) {
-  const page = LOCAL_PAGES.find((p) => p.slug === slug);
-  if (page?.placeLabel) return page.placeLabel;
-  return slug.replace("site-internet-", "").replace(/-ardeche$/, "").replace(/-/g, " ");
-}
-
-function buildFooterZonesHtml() {
-  const cityLinks = LOCAL_CITY_SLUGS.map((slug) => {
-    return `<li><a href="/${slug}">${escapeHtml(labelForSlug(slug))}</a></li>`;
-  }).join("\n            ");
-  const tradeLinks = LOCAL_TRADE_SLUGS.map((slug) => {
-    return `<li><a href="/${slug}">${escapeHtml(labelForSlug(slug))}</a></li>`;
-  }).join("\n            ");
-  return `
-      <section id="footer-zones" class="footer-zones" aria-labelledby="footer-zones-title">
-        <div class="container">
-        <h2 id="footer-zones-title" class="footer-zones__title">Zones et métiers</h2>
-        <div class="footer-zones__grid">
-          <div>
-            <h3 class="footer-zones__subtitle">Villes</h3>
-            <ul class="footer-zones__list">${cityLinks}
-            </ul>
-          </div>
-          <div>
-            <h3 class="footer-zones__subtitle">Métiers</h3>
-            <ul class="footer-zones__list">${tradeLinks}
-            </ul>
-          </div>
-        </div>
-        </div>
-      </section>`;
-}
-
-function injectFooterZones(html) {
-  if (html.includes('id="footer-zones"')) {
-    return html.replace(
-      /<section[^>]*id="footer-zones"[^>]*>[\s\S]*?<\/section>/i,
-      buildFooterZonesHtml().trim()
-    );
-  }
-  return html.replace(
-    /<footer class="site-footer">/i,
-    `${buildFooterZonesHtml()}\n  <footer class="site-footer">`
-  );
-}
-
 function prerenderLegalPages(C) {
   for (const [filename, meta] of Object.entries(LEGAL_PAGES)) {
     const filePath = path.join(publicDir, filename);
     const pageUrl = `${SITE_URL}/${filename}`;
+    const extraHead =
+      filename === "conditions-de-vente.html" && CGV_PROVISIONAL_BANNER
+        ? '  <meta name="robots" content="noindex, nofollow">'
+        : "";
     const html = wrapStaticPage({
       title: meta.title,
       description: meta.description,
       canonicalUrl: pageUrl,
       bodyHtml: meta.body(),
       ogImage: C.seo.ogImage,
+      extraHead,
     });
     fs.writeFileSync(filePath, html, "utf8");
     console.log(`Prérendu : ${filePath}`);

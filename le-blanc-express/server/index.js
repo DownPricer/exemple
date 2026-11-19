@@ -324,7 +324,7 @@ app.use(
 );
 
 // Pages design : uniquement l’index (pas de repli SPA sur les sous-chemins).
-for (const dir of ["elegant", "minimal", "anime", "vtc"]) {
+for (const dir of ["elegant", "minimal", "anime", "vtc", "exemplemaquette"]) {
   app.get([`/${dir}`, `/${dir}/`], (req, res, next) => {
     const file = path.join(publicDir, dir, "index.html");
     if (!fs.existsSync(file)) return next();

@@ -60,6 +60,14 @@ body{font-size:18px}
 #style-selector .theme-switch-refonte__btn.is-active{background:#173d2e;color:#f6f5ef}
 #style-selector .theme-switch-refonte__btn:focus-visible{outline:3px solid #9679c4;outline-offset:4px}
 </style>
+  <style id="footer-zones-css">
+    #footer-zones.footer-zones{padding:72px 0 48px;background:#f6f5ef;border-top:1px solid #dcded3}
+    #footer-zones .footer-zones__title{font-weight:500;font-size:clamp(22px,3vw,28px);letter-spacing:-1px;margin:0 0 18px;color:#173d2e}
+    #footer-zones .footer-zones__subtitle{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;margin:0 0 10px;color:#656f66}
+    #footer-zones .footer-zones__grid{display:grid;gap:28px}
+    #footer-zones .footer-zones__list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 20px}
+    #footer-zones .footer-zones__list a{font-size:13px;font-weight:600;color:#173d2e;text-decoration:underline;text-underline-offset:4px}
+    @media(min-width:768px){#footer-zones .footer-zones__grid{grid-template-columns:1fr 1fr}}</style>
   <link rel="stylesheet" href="/assets/css/callbar-shd.css">
 </head>
 <body>
@@ -268,7 +276,38 @@ body{font-size:18px}
       </div></div>
     </section>
   </main>
-  <footer class="footer"><div class="container"><div class="footer-top"><a class="brand" href="#top" aria-label="SiteReady — retour en haut"><img class="brand-mark" src="/assets/img/favicon.png" alt="" width="28" height="28" decoding="async" style="border-radius:8px;object-fit:cover"><span>SiteReady<span class="brand-dot">.</span></span></a><p class="footer-tagline">Des sites pensés pour les professionnels d’ici.</p><a class="text-link" href="#top">Retour en haut <svg class="icon" aria-hidden="true"><use href="#i-up"></use></svg></a></div><div class="footer-bottom"><p>© <span data-year>2026</span> SiteReady</p><nav aria-label="Liens légaux"><a href="/mentions-legales.html">Mentions légales</a><a href="/conditions-de-vente.html">Conditions de vente</a><a href="/politique-confidentialite.html">Confidentialité</a></nav><span class="footer-made"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg> L’esprit local, en Ardèche.</span></div></div></footer>
+  
+      <section id="footer-zones" class="footer-zones" aria-labelledby="footer-zones-title">
+        <div class="container">
+        <h2 id="footer-zones-title" class="footer-zones__title">Zones et métiers</h2>
+        <div class="footer-zones__grid">
+          <div>
+            <h3 class="footer-zones__subtitle">Villes</h3>
+            <ul class="footer-zones__list"><li><a href="/site-internet-aubenas">Aubenas</a></li>
+            <li><a href="/site-internet-annonay">Annonay</a></li>
+            <li><a href="/site-internet-privas">Privas</a></li>
+            <li><a href="/site-internet-ruoms">Ruoms</a></li>
+            <li><a href="/site-internet-vals-les-bains">Vals-les-Bains</a></li>
+            <li><a href="/site-internet-tournon-sur-rhone">Tournon-sur-Rhône</a></li>
+            <li><a href="/site-internet-le-teil">Le Teil</a></li>
+            <li><a href="/site-internet-largentiere">Largentière</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="footer-zones__subtitle">Métiers</h3>
+            <ul class="footer-zones__list"><li><a href="/site-internet-plombier-ardeche">Plombier</a></li>
+            <li><a href="/site-internet-electricien-ardeche">Électricien</a></li>
+            <li><a href="/site-internet-boulanger-ardeche">Boulanger</a></li>
+            <li><a href="/site-internet-coiffeur-ardeche">Coiffeur</a></li>
+            <li><a href="/site-internet-restaurant-ardeche">Restaurant</a></li>
+            <li><a href="/site-internet-artisan-ardeche">Artisan</a></li>
+            <li><a href="/site-internet-gite-ardeche">Gîte</a></li>
+            </ul>
+          </div>
+        </div>
+        </div>
+      </section>
+  <footer class="footer"><div class="container"><div class="footer-top"><a class="brand" href="#top" aria-label="SiteReady — retour en haut"><img class="brand-mark" src="/assets/img/favicon.png" alt="" width="28" height="28" decoding="async" style="border-radius:8px;object-fit:cover"><span>SiteReady<span class="brand-dot">.</span></span></a><p class="footer-tagline">Des sites pensés pour les professionnels d’ici.</p><a class="text-link" href="#top">Retour en haut <svg class="icon" aria-hidden="true"><use href="#i-up"></use></svg></a></div><div class="footer-bottom"><p>© <span data-year>2026</span> SiteReady</p><nav aria-label="Liens légaux"><a href="/mentions-legales.html">Mentions légales</a><a href="/politique-confidentialite.html">Confidentialité</a></nav><span class="footer-made"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg> L’esprit local.</span></div></div></footer>
   <dialog class="project-preview" id="project-preview" aria-labelledby="preview-title" aria-describedby="preview-copy"><div class="dialog-top"><div><span class="eyebrow">Exploration créative</span><h2 id="preview-title"></h2></div><button type="button" class="dialog-close" aria-label="Fermer l’aperçu"><svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg></button></div><div id="preview-art"></div><p id="preview-copy"></p><a class="button" id="preview-cta" href="#contact">Un univers comme celui-ci ? Parlons-en. <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a></dialog>
   <script>(() => {
   'use strict';

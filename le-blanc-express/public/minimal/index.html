@@ -257,8 +257,22 @@
       *,*::before,*::after{animation:none!important;transition:none!important}
       .js .reveal{opacity:1;transform:none}
     }
+  
+    .example-card--link{text-decoration:none;color:inherit;display:block}
+    .example-card--link .example-card__trade{display:block;padding:16px 18px;font-weight:300;font-size:1.375rem;letter-spacing:-.01em}
+    .example-card--link:hover .example-card__shot{background:#fafafa}
+    .examples-grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
   </style>
 <noscript><style>.faq-item__panel[hidden]{display:block!important;margin-top:.75rem}.reveal{opacity:1!important;transform:none!important}</style></noscript>
+  <style id="footer-zones-css">
+    .footer-zones{padding:40px 0 28px;border-top:1px solid var(--ink)}
+    .footer-zones__title{font-size:1.125rem;font-weight:500;margin:0 0 1rem;letter-spacing:-.02em}
+    .footer-zones__subtitle{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .5rem;color:var(--muted)}
+    .footer-zones__grid{display:grid;gap:1.5rem}
+    .footer-zones__list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.35rem 1.25rem}
+    .footer-zones__list a{font-weight:500;color:inherit;text-underline-offset:5px}
+    .footer-zones__list a:hover{color:var(--accent)}
+    @media(min-width:768px){.footer-zones__grid{grid-template-columns:1fr 1fr}}</style>
   <link rel="stylesheet" href="/assets/css/callbar-shd.css">
 </head>
 <body data-page="minimal">
@@ -510,7 +524,21 @@
             </div>
             <figcaption class="example-card__trade">Restaurant</figcaption>
           </figure>
-        </div>
+        
+          <a class="example-card example-card--link reveal" href="/exemplemaquette/">
+            <div class="example-card__shot">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+                <rect x="24" y="200" width="352" height="48" fill="#2d5a27" opacity=".25"/>
+                <ellipse cx="120" cy="170" rx="52" ry="70" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+                <ellipse cx="260" cy="155" rx="70" ry="88" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+                <rect x="24" y="64" width="160" height="14" fill="#0b0b0b"/>
+                <rect x="24" y="92" width="220" height="1.5" fill="#bdbdbd"/>
+                <rect x="290" y="64" width="86" height="30" fill="#c8321a"/>
+              </svg>
+              <span class="example-card__fictif">Exemple fictif</span><span class="example-card__label">Exemple de maquette</span>
+            </div>
+            <span class="example-card__trade">Paysagiste</span>
+          </a></div>
       </div>
     </section>
 
@@ -659,7 +687,7 @@
             <label id="consent-label">
               <input type="checkbox" name="consent" value="true">
               
-              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a> et aux <a href="/conditions-de-vente.html">conditions de vente</a>.</span>
+              <span data-label-consent>J’accepte que mes informations soient utilisées pour me recontacter, conformément à la <a href="/politique-confidentialite.html">politique de confidentialité</a>.</span>
             </label>
             <p class="field-error" data-error-for="consent" role="alert"></p>
           </div>
@@ -671,16 +699,44 @@
     </section>
   </main>
 
+  
+      <section id="footer-zones" class="footer-zones" aria-labelledby="footer-zones-title">
+        <div class="container">
+        <h2 id="footer-zones-title" class="footer-zones__title">Zones et métiers</h2>
+        <div class="footer-zones__grid">
+          <div>
+            <h3 class="footer-zones__subtitle">Villes</h3>
+            <ul class="footer-zones__list"><li><a href="/site-internet-aubenas">Aubenas</a></li>
+            <li><a href="/site-internet-annonay">Annonay</a></li>
+            <li><a href="/site-internet-privas">Privas</a></li>
+            <li><a href="/site-internet-ruoms">Ruoms</a></li>
+            <li><a href="/site-internet-vals-les-bains">Vals-les-Bains</a></li>
+            <li><a href="/site-internet-tournon-sur-rhone">Tournon-sur-Rhône</a></li>
+            <li><a href="/site-internet-le-teil">Le Teil</a></li>
+            <li><a href="/site-internet-largentiere">Largentière</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="footer-zones__subtitle">Métiers</h3>
+            <ul class="footer-zones__list"><li><a href="/site-internet-plombier-ardeche">Plombier</a></li>
+            <li><a href="/site-internet-electricien-ardeche">Électricien</a></li>
+            <li><a href="/site-internet-boulanger-ardeche">Boulanger</a></li>
+            <li><a href="/site-internet-coiffeur-ardeche">Coiffeur</a></li>
+            <li><a href="/site-internet-restaurant-ardeche">Restaurant</a></li>
+            <li><a href="/site-internet-artisan-ardeche">Artisan</a></li>
+            <li><a href="/site-internet-gite-ardeche">Gîte</a></li>
+            </ul>
+          </div>
+        </div>
+        </div>
+      </section>
   <footer class="site-footer">
     <div class="container footer-inner">
       <nav aria-label="Liens légaux">
         <a href="/mentions-legales.html">Mentions légales</a>
-        <a href="/mentions-legales.html">Mentions légales</a>
         <a href="/politique-confidentialite.html">Politique de confidentialité</a>
-        <a href="/conditions-de-vente.html">Conditions de vente</a>
-        <a href="/conditions-de-vente.html">Conditions de vente</a>
       </nav>
-      <p data-footer-tagline>SiteReady — Ardèche</p>
+      <p data-footer-tagline>SiteReady</p>
     </div>
   </footer>
 

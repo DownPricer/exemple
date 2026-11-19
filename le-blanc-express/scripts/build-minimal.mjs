@@ -7,6 +7,8 @@ import { injectSeoHead } from "./seo-head.mjs";
 import { injectCloudflareAnalytics } from "./cloudflare-analytics.mjs";
 import { injectCallbar } from "./inject-callbar.mjs";
 import { injectFaviconHead } from "./favicon-head.mjs";
+import { injectFooterZones, injectFooterZonesStyles } from "./footer-zones.mjs";
+import { appendPaysagisteExampleCard, injectMinimalExampleLinkStyles } from "./examples-maquette.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
@@ -41,7 +43,7 @@ function patchFormCopy(html, C, O) {
     /<span data-has-website-yes>[^<]*<\/span>/,
     `<span data-has-website-yes>${escapeHtml(f.hasWebsiteYes)}</span>`
   );
-  const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>${escapeHtml(f.consentAndTerms || " et aux ")}<a href="/conditions-de-vente.html">${escapeHtml(f.consentTermsLink || "conditions de vente")}</a>.`;
+  const consentHtml = `${escapeHtml(f.consentBefore)}<a href="/politique-confidentialite.html">${escapeHtml(f.consentLink)}</a>.`;
   out = out.replace(/<span data-label-consent>[\s\S]*?<\/span>/, `<span data-label-consent>${consentHtml}</span>`);
   out = out.replace(
     /<button type="submit" class="btn contact-form__submit" data-submit-label>[^<]*<\/button>/,
@@ -134,10 +136,6 @@ function patch(html, content, offers) {
   out = injectSeoHead(out, content.seo, content.site, `${content.site.url}/minimal/`, {
     canonicalUrl: `${content.site.url}/`,
   });
-  out = out.replace(
-    /<a href="\/politique-confidentialite\.html">Politique de confidentialité<\/a>/,
-    '<a href="/mentions-legales.html">Mentions légales</a>\n        <a href="/politique-confidentialite.html">Politique de confidentialité</a>\n        <a href="/conditions-de-vente.html">Conditions de vente</a>'
-  );
   out = injectNoScriptMinimal(out);
   out = out.replace(
     /\n\s*\/\* Formulaire : validation et envoi[\s\S]*?\.then\(function \(\) \{ btn\.disabled = false; \}\);\s*\}\);\s*/,
@@ -146,6 +144,10 @@ function patch(html, content, offers) {
   if (!out.includes("minimal-bridge.js")) {
     out = out.replace(/<\/body>/i, '  <script src="/minimal/minimal-bridge.js"></script>\n</body>');
   }
+  out = injectMinimalExampleLinkStyles(out);
+  out = appendPaysagisteExampleCard(out);
+  out = injectFooterZonesStyles(out, "minimal");
+  out = injectFooterZones(out);
   out = injectCloudflareAnalytics(out);
   out = injectCallbar(out);
   return out;

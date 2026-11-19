@@ -42,6 +42,13 @@ export const LEGAL_HTML_PAGES = [
   "/conditions-de-vente.html",
 ];
 
+/** Pages légales indexables (hors CGV tant que version provisoire). */
+export function publicLegalPaths() {
+  const base = ["/mentions-legales.html", "/politique-confidentialite.html"];
+  if (!CGV_PROVISIONAL_BANNER) base.push("/conditions-de-vente.html");
+  return base;
+}
+
 export const LOCAL_CITY_SLUGS = [
   "site-internet-aubenas",
   "site-internet-annonay",
@@ -67,7 +74,7 @@ export function allSitemapPaths() {
   return [
     ...DESIGN_PATHS,
     ...VTC_PATHS,
-    ...LEGAL_HTML_PAGES,
+    ...publicLegalPaths(),
     ...LOCAL_CITY_SLUGS.map((s) => `/${s}`),
     ...LOCAL_TRADE_SLUGS.map((s) => `/${s}`),
   ];

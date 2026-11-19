@@ -5,7 +5,7 @@ window.SITE_CONTENT = {
     domain: "sitereadyshd.fr",
     url: "https://sitereadyshd.fr",
     region: "Ardèche · 07",
-    taglineFooter: "SiteReady — Ardèche",
+    taglineFooter: "SiteReady",
   },
 
   seo: {
@@ -177,6 +177,13 @@ window.SITE_CONTENT = {
         trade: "Restaurant",
         mockTitle: "Votre restaurant",
       },
+      {
+        id: "paysagiste",
+        label: "Exemple de maquette",
+        trade: "Paysagiste",
+        mockTitle: "T'Nature & Jardin",
+        href: "/exemplemaquette/",
+      },
     ],
   },
 
@@ -231,8 +238,6 @@ window.SITE_CONTENT = {
       message: "Votre message (facultatif)",
       consentBefore: "J’accepte que mes informations soient utilisées pour me recontacter, conformément à la ",
       consentLink: "politique de confidentialité",
-      consentAndTerms: " et aux ",
-      consentTermsLink: "conditions de vente",
       preferredStyle: "Style préféré",
       submit: "Envoyer ma demande",
       sending: "Envoi en cours…",

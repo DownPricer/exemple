@@ -1,4 +1,4 @@
-import { SITE_URL, allSitemapPaths } from "./site-config.mjs";
+import { CGV_PROVISIONAL_BANNER, SITE_URL, allSitemapPaths } from "./site-config.mjs";
 
 export function buildSitemapXml() {
   const urls = allSitemapPaths()
@@ -21,11 +21,13 @@ ${urls}
 }
 
 export function buildRobotsTxt() {
+  const cgvBlock = CGV_PROVISIONAL_BANNER ? "Disallow: /conditions-de-vente.html\n" : "";
   return `User-agent: *
 Allow: /
 Disallow: /demo/
 Disallow: /admin/
-
+Disallow: /exemplemaquette/
+${cgvBlock}
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
 }

@@ -1,0 +1,148 @@
+/* Molette de choix de style — flottante */
+.style-picker {
+  position: fixed;
+  z-index: 200;
+  right: 16px;
+  bottom: 16px;
+  width: 168px;
+  padding: 12px 14px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #d8dfd2;
+  box-shadow: 0 14px 40px rgba(20, 44, 38, 0.18);
+  backdrop-filter: blur(10px);
+  font-family: system-ui, sans-serif;
+  color: #1c2b22;
+  user-select: none;
+}
+
+.style-picker__label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5a6a5f;
+}
+
+.style-picker__dial {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 12px;
+}
+
+.style-picker__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #cfd6c7;
+  background:
+    radial-gradient(circle at center, #fff 0 28px, transparent 29px),
+    conic-gradient(from -90deg, #3f7a1f 0 50%, #142c26 50% 100%);
+  opacity: 0.22;
+}
+
+.style-picker__knob {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background: #f6f4ee;
+  border: 1px solid #cfd6c7;
+  box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(28, 43, 34, 0.12);
+  display: grid;
+  place-items: center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.style-picker[data-style="refonte"] .style-picker__knob {
+  transform: rotate(180deg);
+}
+
+.style-picker__needle {
+  width: 4px;
+  height: 28px;
+  border-radius: 999px;
+  background: #1c2b22;
+  transform-origin: center 22px;
+  margin-top: -8px;
+}
+
+.style-picker[data-style="refonte"] .style-picker__needle {
+  background: #a6b87a;
+}
+
+.style-picker__options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.style-picker__btn {
+  appearance: none;
+  border: 1px solid #cfd6c7;
+  background: #fff;
+  color: #44544a;
+  border-radius: 999px;
+  min-height: 34px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.style-picker__btn:hover {
+  border-color: #9dbe7e;
+  color: #1c2b22;
+}
+
+.style-picker__btn.is-active {
+  background: #1c2b22;
+  border-color: #1c2b22;
+  color: #fff;
+}
+
+.style-picker[data-style="refonte"] .style-picker__btn.is-active {
+  background: #142c26;
+  border-color: #142c26;
+}
+
+.style-picker__hint {
+  margin: 8px 0 0;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #5a6a5f;
+  text-align: center;
+}
+
+@media (max-width: 899px) {
+  .style-picker {
+    right: 12px;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
+    width: 150px;
+    padding: 10px 12px 12px;
+  }
+
+  .style-picker__dial {
+    width: 72px;
+    height: 72px;
+  }
+
+  .style-picker__knob {
+    inset: 12px;
+  }
+
+  .style-picker__needle {
+    height: 22px;
+    margin-top: -6px;
+    transform-origin: center 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .style-picker__knob {
+    transition: none;
+  }
+}
